@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seu Promoter — Ingressos para Eventos em Florianópolis</title>
+  <meta name="description"
+    content="Encontre os melhores eventos em Florianópolis: pagode, festas eletrônicas, carnaval, réveillon e muito mais. Garanta seu ingresso com segurança via Seu Promoter.">
+  <meta property="og:title" content="Seu Promoter — Ingressos para Eventos em Florianópolis">
+  <meta property="og:description"
+    content="Os melhores eventos de Floripa em um só lugar. Pagode, eletrônico, carnaval, réveillon e mais.">
+  <meta property="og:type" content="website">
+  <meta name="robots" content="index, follow">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/globals.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* Search bar */
+    .search-bar {
+      display: flex;
+      background: var(--color-white);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      max-width: 560px;
+      margin: 2rem auto 0;
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      padding: 1rem 1.25rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--color-gray-800);
+      outline: none;
+    }
+
+    .search-btn {
+      background: var(--color-black);
+      color: var(--color-white);
+      border: none;
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background var(--transition-fast);
+      flex-shrink: 0;
+    }
+
+    .search-btn:hover {
+      background: #333;
+    }
+
+    /* Section headers */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 800;
+    }
+
+    .see-all {
+      font-weight: 600;
+      color: var(--color-primary-hover);
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .see-all:hover {
+      color: var(--color-black);
+    }
+
+    /* Featured cards (Carousel) */
+    .carousel-container {
+      position: relative;
+      width: 100%;
+    }
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+    .carousel-dots .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-gray-300);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .carousel-dots .dot.active {
+      background: var(--color-black);
+      transform: scale(1.2);
+    }
+    .carousel-arrow {
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-200);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+    }
+    .carousel-arrow:hover {
+      background: var(--color-black);
+      color: var(--color-white);
+    }
+    .carousel-arrow.prev {
+      left: -24px;
+    }
+    .carousel-arrow.next {
+      right: -24px;
+    }
+    
+    .featured-grid {
+      display: flex;
+      overflow-x: auto;
+      gap: 1.5rem;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 0.5rem 0; /* Espaço para shadow */
+      overscroll-behavior-x: contain;
+      scroll-behavior: smooth;
+    }
+    .featured-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .event-card-featured {
+      flex: 0 0 calc(33.333% - 1rem);
+      background: var(--color-white);
+      border-radius: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .feat-img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      transition: transform var(--transition-normal);
+    }
+
+    .badge-destaque {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: var(--color-primary);
+      color: var(--color-black);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* Categories grid */
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1rem;
+    }
+
+    .category-card {
+      background: var(--color-white);
+      border-radius: 16px;
+      padding: 1.5rem 0.75rem;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      text-decoration: none;
+      color: var(--color-black);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      border: 2px solid transparent;
+    }
+
+    .category-card:hover {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .category-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--color-gray-100);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background var(--transition-normal);
+    }
+
+    .category-card:hover .category-icon {
+      background: var(--color-black);
+    }
+
+    .category-card:hover .category-icon svg {
+      stroke: var(--color-white);
+    }
+
+    .category-name {
+      font-weight: 600;
+      font-size: 0.8rem;
+      line-height: 1.2;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.25rem !important;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+      }
+
+      .featured-grid {
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .event-card-featured {
+        flex: 0 0 calc(50% - 0.75rem);
+        scroll-snap-align: start;
+      }
+
+      .carousel-arrow {
+        display: none !important;
+      }
+
+      .categories-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-links {
+        display: none;
+      }
+
+      .search-bar {
+        margin: 1.5rem auto 0;
+      }
+      .search-input {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+      }
+      .search-btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+      }
+
+      .featured-grid {
+        margin: 0 -24px;
+        padding: 0.5rem 24px;
+        gap: 1rem;
+      }
+      .event-card-featured {
+        flex: 0 0 260px;
+        scroll-snap-align: start;
+      }
+      .carousel-dots {
+        margin-top: 1rem;
+      }
+
+      .categories-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+      }
+    }
+
+    /* Main Banner Carousel */
+    .main-banner-section {
+      padding: 0;
+      margin-top: 7.5rem; /* Margin to clear the fixed navbar */
+      margin-bottom: 2.5rem;
+    }
+
+    .main-banner-carousel {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+      background: var(--color-gray-100);
+    }
+
+    .main-banner-track {
+      display: flex;
+      transition: transform var(--transition-normal);
+      width: 100%;
+    }
+
+    .main-banner-slide {
+      flex: 0 0 100%;
+      position: relative;
+      aspect-ratio: 1983/793; /* Match the dimensions of image.png (approx 2.5:1) */
+      overflow: hidden;
+    }
+
+    .main-banner-slide a {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .main-banner-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .main-banner-slide:hover img {
+      transform: scale(1.02);
+    }
+
+    .main-banner-arrow {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--color-gray-200);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-fast);
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      color: var(--color-black);
+    }
+
+    .main-banner-arrow:hover {
+      background: var(--color-black);
+      color: var(--color-white);
+      border-color: var(--color-black);
+    }
+
+    .main-banner-arrow.prev {
+      left: 1.5rem;
+    }
+
+    .main-banner-arrow.next {
+      right: 1.5rem;
+    }
+
+    .main-banner-dots {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      position: absolute;
+      bottom: 1.25rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.5rem 0.8rem;
+      border-radius: 999px;
+      backdrop-filter: blur(4px);
+    }
+
+    .main-banner-dots .banner-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .main-banner-dots .banner-dot.active {
+      background: var(--color-primary);
+      width: 20px;
+      border-radius: 4px;
+    }
+
+    /* Mobile styles for banner carousel */
+    @media (max-width: 768px) {
+      .main-banner-section {
+        margin-top: 5.5rem;
+        margin-bottom: 1.5rem;
+      }
+      .main-banner-carousel {
+        border-radius: 12px;
+      }
+      .main-banner-slide {
+        aspect-ratio: 9/16; /* Mobile portrait aspect ratio (900x1600) */
+      }
+      .main-banner-arrow {
+        width: 36px;
+        height: 36px;
+      }
+      .main-banner-arrow.prev {
+        left: 0.75rem;
+      }
+      .main-banner-arrow.next {
+        right: 0.75rem;
+      }
+      .main-banner-dots {
+        bottom: 0.75rem;
+        padding: 0.4rem 0.6rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="container">
+      <a href="index.html" class="nav-logo" aria-label="Seu Promoter Floripa"><img
+          src="assets/images/logo-seu-promoter.svg" alt="Seu Promoter Floripa" class="brand-logo"></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="categoria.html">P12 Jurerê</a></li>
+        <li><a href="categoria.html">Stage</a></li>
+        <li><a href="categoria.html">Carnaval</a></li>
+        <li><a href="categoria.html">Réveillon</a></li>
+        <li><a href="categoria.html">Outros Eventos</a></li>
+      </ul>
+      <a href="https://chat.whatsapp.com/B6zgGEb4gGm3YR0DasbXNB" target="_blank" rel="noopener" class="btn"
+        style="background: var(--color-black); color: var(--color-white); font-size: 0.875rem; gap: 0.4rem; align-items: center;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"
+          style="display: block;">
+          <path
+            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.455 5.703 1.456h.004c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+        Comunidade
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN BANNER CAROUSEL -->
+  <section class="main-banner-section reveal-on-scroll">
+    <div class="container">
+      <div class="main-banner-carousel">
+        <div class="main-banner-track">
+          <div class="main-banner-slide">
+            <a href="evento.html">
+              <picture>
+                <source media="(max-width: 768px)" srcset="assets/images/banner-mobile.jpeg">
+                <img src="assets/images/image.png" alt="Folianópolis 2026 - Compre seu ingresso">
+              </picture>
+            </a>
+          </div>
+          <div class="main-banner-slide">
+            <a href="categoria.html">
+              <picture>
+                <source media="(max-width: 768px)" srcset="assets/images/banner-mobile.jpeg">
+                <img src="assets/images/image.png" alt="Melhores Eventos de Pagode em Floripa">
+              </picture>
+            </a>
+          </div>
+          <div class="main-banner-slide">
+            <a href="evento.html">
+              <picture>
+                <source media="(max-width: 768px)" srcset="assets/images/banner-mobile.jpeg">
+                <img src="assets/images/image.png" alt="Réveillon Costão do Santinho 2027">
+              </picture>
+            </a>
+          </div>
+          <div class="main-banner-slide">
+            <a href="categoria.html">
+              <picture>
+                <source media="(max-width: 768px)" srcset="assets/images/banner-mobile.jpeg">
+                <img src="assets/images/image.png" alt="Festas Eletrônicas em Floripa">
+              </picture>
+            </a>
+          </div>
+        </div>
+
+        <!-- Arrows -->
+        <button class="main-banner-arrow prev" aria-label="Anterior">
+          <i data-lucide="chevron-left" style="width: 24px; height: 24px;"></i>
+        </button>
+        <button class="main-banner-arrow next" aria-label="Próximo">
+          <i data-lucide="chevron-right" style="width: 24px; height: 24px;"></i>
+        </button>
+
+        <!-- Dots -->
+        <div class="main-banner-dots">
+          <span class="banner-dot active" data-slide="0"></span>
+          <span class="banner-dot" data-slide="1"></span>
+          <span class="banner-dot" data-slide="2"></span>
+          <span class="banner-dot" data-slide="3"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EM DESTAQUE -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header reveal-on-scroll">
+        <h2 class="section-title">Em Alta 🔥</h2>
+        <a href="categoria.html" class="see-all">
+          Ver todos
+          <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+        </a>
+      </div>
+      <div class="carousel-container reveal-on-scroll">
+        <div class="featured-grid">
+
+          <article class="event-card-featured hover-glow hover-lift">
+          <span class="badge-destaque">⭐ Destaque</span>
+          <div style="overflow: hidden;">
+            <img src="assets/images/show.jpg" alt="Folianópolis 2026 — Carnaval em Florianópolis" class="feat-img">
+          </div>
+          <div class="event-card-body">
+            <span class="event-date">05 de Agosto · 14h00</span>
+            <h3 class="event-title">Folianópolis 2026</h3>
+            <p class="event-location">
+              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
+              Passarela Nego Quirido, Centro — Florianópolis
+            </p>
+            <div class="event-footer">
+              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="event-card-featured hover-glow hover-lift">
+          <span class="badge-destaque">🎆 Destaque</span>
+          <div style="overflow: hidden;">
+            <img src="assets/images/show.jpg" alt="Réveillon Floripa 2027 — Costão do Santinho" class="feat-img">
+          </div>
+          <div class="event-card-body">
+            <span class="event-date">31 de Dezembro · 22h00</span>
+            <h3 class="event-title">Réveillon Floripa 2027</h3>
+            <p class="event-location">
+              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
+              Costão do Santinho Resort — Florianópolis
+            </p>
+            <div class="event-footer">
+              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="event-card-featured hover-glow hover-lift">
+          <span class="badge-destaque">🔥 Destaque</span>
+          <div style="overflow: hidden;">
+            <img src="assets/images/show.jpg" alt="Pagodão Premium — Jurerê Beach Village" class="feat-img">
+          </div>
+          <div class="event-card-body">
+            <span class="event-date">16 Ago · 20h00</span>
+            <h3 class="event-title">Pagodão Premium</h3>
+            <p class="event-location">
+              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
+              Jurerê Beach Village
+            </p>
+            <div class="event-footer">
+              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="event-card-featured hover-glow hover-lift">
+          <span class="badge-destaque">🌟 Destaque</span>
+          <div style="overflow: hidden;">
+            <img src="assets/images/show.jpg" alt="Pagode do Forte — Ingleses" class="feat-img">
+          </div>
+          <div class="event-card-body">
+            <span class="event-date">02 Ago · 21h00</span>
+            <h3 class="event-title">Pagode do Forte</h3>
+            <p class="event-location">
+              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
+              Praia dos Ingleses
+            </p>
+            <div class="event-footer">
+              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
+            </div>
+          </div>
+        </article>
+
+        </div>
+        <button class="carousel-arrow prev" aria-label="Anterior">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <button class="carousel-arrow next" aria-label="Próximo">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <div class="carousel-dots">
+          <!-- Gerados dinamicamente via JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERO (Moved from Top) -->
+  <section class="hero reveal-on-scroll">
+    <div class="container">
+      <h1 class="hero-title" style="max-width: 780px; margin: 0 auto 1.5rem;">O seu passaporte para as melhores festas e
+        shows da cidade</h1>
+      <p class="hero-subtitle">Descubra, acompanhe e garanta seu ingresso com desconto exclusivo do Seu Promoter
+        Floripa.</p>
+      <div class="search-bar">
+        <input type="text" class="search-input" placeholder="Buscar evento, artista ou local...">
+        <button class="search-btn">
+          <i data-lucide="search" style="width: 16px; height: 16px;"></i>
+          Buscar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRÓXIMOS EVENTOS -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header reveal-on-scroll">
+        <h2 class="section-title">Próximos Eventos</h2>
+        <a href="categoria.html" class="see-all">
+          Ver todos
+          <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+        </a>
+      </div>
+      <div class="grid-3" id="events-grid">
+
+        <article class="event-card event-card-feed reveal-on-scroll delay-100 hover-glow">
+          <div style="overflow: hidden;">
+            <img src="assets/images/feed-1.png" alt="Pagodinho do Morro — Pagode em Jurerê Internacional"
+              class="event-card-img">
+          </div>
+          <div class="event-card-body">
+            <span class="event-date">19 Jul · 20h00</span>
+            <h3 class="event-title">Pagodinho do Morro</h3>
+            <p class="event-location">
+              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
+              P12, Jurerê Internacional
+            </p>
+            <div class="event-footer">
+              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="event-card event-card-feed reveal-on-scroll delay-200 hover-glow">
+          <div style="overflow: hidden;">
+            <img src="assets/images/feed-2.png" alt="Rave da Lagoa — Festa eletrônica em Florianópolis"
+              class="event-card-img">
+          </div>
+          <div class="event-card-body">
+            <span class="event-date">26 Jul · 23h00</span>
+            <h3 class="event-title">Rave da Lagoa</h3>
+            <p class="event-location">
+              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
+              Lagoa da Conceição
+            </p>
+            <div class="event-footer">
+              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="event-card reveal-on-scroll delay-300 hover-glow">
+          <div style="overflow: hidden;">
+            <img src="assets/images/show.jpg" alt="Folianópolis 2026 — Carnaval em Florianópolis"
+              class="event-card-img">
+          </div>
+          <div class="event-card-body">
+            <span class="event-date">05 Ago · 14h00</span>
+            <h3 class="event-title">Folianópolis 2026</h3>
+            <p class="event-location">
+              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
+              Passarela Nego Quirido
+            </p>
+            <div class="event-footer">
+              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="event-card reveal-on-scroll delay-100 hover-glow">
+          <div style="overflow: hidden;">
+            <img src="assets/images/show.jpg" alt="Ultra Floripa — Festival eletrônico" class="event-card-img">
+          </div>
+          <div class="event-card-body">
+            <span class="event-date">02 Ago · 22h00</span>
+            <h3 class="event-title">Ultra Floripa</h3>
+            <p class="event-location">
+              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
+              Arena Mastercredi
+            </p>
+            <div class="event-footer">
+              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="event-card reveal-on-scroll delay-200 hover-glow">
+          <div style="overflow: hidden;">
+            <img src="assets/images/show.jpg" alt="Samba da Ilha — Pagode no Centro de Florianópolis"
+              class="event-card-img">
+          </div>
+          <div class="event-card-body">
+            <span class="event-date">12 Jul · 20h00</span>
+            <h3 class="event-title">Samba da Ilha</h3>
+            <p class="event-location">
+              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
+              Samba Rock Bar, Centro
+            </p>
+            <div class="event-footer">
+              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="event-card reveal-on-scroll delay-300 hover-glow">
+          <div style="overflow: hidden;">
+            <img src="assets/images/show.jpg" alt="Réveillon Floripa 2027 — Costão do Santinho" class="event-card-img">
+          </div>
+          <div class="event-card-body">
+            <span class="event-date">31 Dez · 22h00</span>
+            <h3 class="event-title">Réveillon Floripa 2027</h3>
+            <p class="event-location">
+              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
+              Costão do Santinho
+            </p>
+            <div class="event-footer">
+              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPLORAR POR CATEGORIA -->
+  <section class="section" style="background-color: var(--color-white);">
+    <div class="container">
+      <div class="section-header reveal-on-scroll">
+        <h2 class="section-title">Explorar por Categoria</h2>
+      </div>
+      <div class="categories-grid" id="categories-grid">
+
+        <a href="categoria.html" class="category-card reveal-on-scroll delay-100">
+          <div class="category-icon">
+            <i data-lucide="music-2" style="width: 24px; height: 24px;"></i>
+          </div>
+          <span class="category-name">Pagode</span>
+        </a>
+
+        <a href="categoria.html" class="category-card reveal-on-scroll delay-200">
+          <div class="category-icon">
+            <i data-lucide="zap" style="width: 24px; height: 24px;"></i>
+          </div>
+          <span class="category-name">Eletrônico</span>
+        </a>
+
+        <a href="categoria.html" class="category-card reveal-on-scroll delay-300">
+          <div class="category-icon">
+            <i data-lucide="star" style="width: 24px; height: 24px;"></i>
+          </div>
+          <span class="category-name">Carnaval</span>
+        </a>
+
+        <a href="categoria.html" class="category-card reveal-on-scroll delay-400">
+          <div class="category-icon">
+            <i data-lucide="sparkles" style="width: 24px; height: 24px;"></i>
+          </div>
+          <span class="category-name">Réveillon</span>
+        </a>
+
+        <a href="categoria.html" class="category-card reveal-on-scroll delay-500">
+          <div class="category-icon">
+            <i data-lucide="mic-2" style="width: 24px; height: 24px;"></i>
+          </div>
+          <span class="category-name">Shows</span>
+        </a>
+
+        <a href="categoria.html" class="category-card reveal-on-scroll">
+          <div class="category-icon">
+            <i data-lucide="layout-grid" style="width: 24px; height: 24px;"></i>
+          </div>
+          <span class="category-name">Ver Todos</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- WHATSAPP BANNER SECTION -->
+  <section class="section" style="background-color: var(--color-gray-50); padding-top: 0; padding-bottom: 5rem;">
+    <div class="container">
+      <div class="whatsapp-banner reveal-on-scroll hover-glow">
+        <div class="whatsapp-banner-content">
+          <span class="whatsapp-banner-badge" style="align-items: center;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor"
+              style="display: block; margin-right: 0.25rem;">
+              <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.455 5.703 1.456h.004c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+            </svg>
+            Grupo VIP Exclusivo
+          </span>
+          <h2 class="whatsapp-banner-title">
+            Participe do nosso grupo de informações e desconto no WhatsApp
+          </h2>
+          <p class="whatsapp-banner-desc">
+            Fique por dentro de todas as novidades, receba spoilers de atrações e garanta lotes promocionais antes de
+            todo mundo com o Seu Promoter.
+          </p>
+        </div>
+        <div class="whatsapp-banner-action">
+          <a href="https://wa.me/5548996053430?text=Ol%C3%A1%21%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20eventos." target="_blank" rel="noopener" class="btn btn-whatsapp-cta hover-lift">
+            Entrar no Grupo
+            <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="index.html" class="nav-logo" aria-label="Seu Promoter Floripa"><img
+              src="assets/images/logo-seu-promoter.svg" alt="Seu Promoter Floripa"
+              class="brand-logo brand-logo-footer"></a>
+        </div>
+        <div class="footer-col">
+          <h4>Institucional</h4>
+          <ul>
+            <li><a href="#">Contato</a></li>
+            <li><a href="#">Política de Privacidade</a></li>
+            <li><a href="#">Termos de Uso</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Siga-nos</h4>
+          <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+            <a href="https://www.instagram.com/seupromoterfloripa/" target="_blank" rel="noopener" class="social-icon"
+              aria-label="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"
+                style="display: block;">
+                <path
+                  d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204 0.013-3.583 0.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
+              </svg>
+            </a>
+            <a href="https://www.tiktok.com/@seupromoterfloripa?_r=1&_t=ZS-97R5voLqK6J" target="_blank" rel="noopener" class="social-icon" aria-label="TikTok">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display: block;">
+                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.95v7.4c-.01 1.94-.69 3.84-1.95 5.3-1.28 1.45-3.08 2.38-5.02 2.62-1.92.23-3.92-.12-5.59-1.12-1.64-1-2.9-2.52-3.48-4.32-.57-1.81-.46-3.8.31-5.54.78-1.74 2.14-3.17 3.86-3.95 1.74-.78 3.73-.9 5.56-.34v4.13c-1.1-.28-2.29-.16-3.3.38-1.02.55-1.78 1.48-2.11 2.59-.33 1.1-.15 2.3.49 3.25.64.93 1.64 1.54 2.8 1.68 1.15.13 2.35-.16 3.28-.84.94-.68 1.54-1.72 1.68-2.87V.02z"/>
+              </svg>
+            </a>
+          </div>
+          <p style="color: var(--color-gray-400); font-size: 0.8rem; line-height: 1.6;">
+            📍 Florianópolis, SC<br>
+            contato@seupromoter.com.br
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Seu Promoter. Todos os direitos reservados. Florianópolis, SC.
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-client.js"></script>
+  <script src="assets/js/interactions.js"></script>
+  <script src="assets/js/dynamic-data.js"></script>
+</body>
+
+</html>

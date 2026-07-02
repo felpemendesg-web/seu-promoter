@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banners — Admin Seu Promoter</title>
+  <link rel="stylesheet" href="assets/css/admin.css">
+  <style>
+    .banner-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+    .banner-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .banner-card-imgs { display: grid; grid-template-columns: 2fr 1fr; gap: 0; }
+    .banner-img-desktop { aspect-ratio: 16/5; object-fit: cover; width: 100%; background: var(--border); }
+    .banner-img-mobile  { aspect-ratio: 9/16; object-fit: cover; width: 100%; background: var(--border); }
+    .banner-img-placeholder { display: flex; align-items: center; justify-content: center; color: var(--text-dim); }
+    .banner-card-body { padding: 1rem; }
+    .banner-card-footer { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; border-top: 1px solid var(--border); }
+    .dual-upload { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 480px) { .dual-upload { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="../assets/images/logo-seu-promoter.svg" alt="Seu Promoter">
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Menu</span>
+      <a href="dashboard.html" class="nav-item">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="events.html" class="nav-item">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Eventos
+      </a>
+      <a href="categories.html" class="nav-item">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+        Categorias
+      </a>
+      <a href="banners.html" class="nav-item active">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>
+        Banners
+      </a>
+      <a href="members.html" class="nav-item">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Membros
+      </a>
+      <span class="nav-section-label">Site</span>
+      <a href="../index.html" target="_blank" class="nav-item">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Ver Site
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sidebar-avatar">A</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="sidebar-user-name">…</div>
+          <div class="sidebar-user-role" id="sidebar-user-role"></div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="width:100%;" onclick="logout()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sair
+      </button>
+    </div>
+  </aside>
+
+  <div class="sidebar-backdrop" id="backdrop"></div>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="topbar-left">
+        <button class="mobile-toggle" id="mobile-toggle" aria-label="Menu">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <h1>Banners</h1>
+      </div>
+      <button class="btn btn-primary" onclick="openModal()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Novo Banner
+      </button>
+    </div>
+
+    <div class="admin-content">
+      <div class="alert alert-info" style="margin-bottom:1.5rem; font-size:0.8rem;">
+        Cada banner precisa de <strong>duas imagens</strong>: uma para Desktop (proporção ~2.5:1) e uma para Mobile (proporção 9:16). O site exibe automaticamente a versão correta para cada dispositivo.
+      </div>
+      <div id="banners-grid" class="banner-grid">
+        <div class="loading"><div class="spinner"></div>Carregando…</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Novo Banner</span>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="banner-id">
+
+      <div class="form-group">
+        <label class="form-label">Título (opcional)</label>
+        <input type="text" id="banner-title" class="form-input" placeholder="Ex: Carnaval 2026">
+      </div>
+
+      <div class="dual-upload">
+        <!-- Desktop -->
+        <div class="form-group">
+          <label class="form-label">Imagem Desktop *</label>
+          <p class="form-hint" style="margin-bottom:0.5rem;">Proporção ~2.5:1 (ex: 1983×793px)</p>
+          <div class="upload-zone" id="desktop-upload-zone">
+            <input type="file" id="desktop-file" accept="image/*">
+            <div class="upload-icon">
+              <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <p class="upload-text" style="font-size:0.8rem;">Desktop</p>
+          </div>
+          <img class="img-preview" id="desktop-preview" alt="Desktop preview">
+          <input type="hidden" id="desktop-url">
+        </div>
+
+        <!-- Mobile -->
+        <div class="form-group">
+          <label class="form-label">Imagem Mobile *</label>
+          <p class="form-hint" style="margin-bottom:0.5rem;">Proporção 9:16 (ex: 900×1600px)</p>
+          <div class="upload-zone" id="mobile-upload-zone">
+            <input type="file" id="mobile-file" accept="image/*">
+            <div class="upload-icon">
+              <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
+            </div>
+            <p class="upload-text" style="font-size:0.8rem;">Mobile</p>
+          </div>
+          <img class="img-preview" id="mobile-preview" alt="Mobile preview">
+          <input type="hidden" id="mobile-url">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Link ao clicar (opcional)</label>
+        <input type="url" id="banner-link" class="form-input" placeholder="https://…">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Ordem de exibição</label>
+          <input type="number" id="banner-order" class="form-input" value="0" min="0">
+          <p class="form-hint">Menor número = aparece primeiro</p>
+        </div>
+        <div class="form-group" style="display:flex; align-items:flex-end; padding-bottom:1.25rem;">
+          <label style="display:flex; align-items:center; gap:0.625rem; cursor:pointer; font-size:0.875rem;">
+            <div class="toggle">
+              <input type="checkbox" id="banner-active" checked>
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </div>
+            Ativo (visível no site)
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" id="save-btn" onclick="saveBanner()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/supabase-client.js"></script>
+<script src="assets/js/auth.js"></script>
+<script>
+let editingId = null;
+
+(async () => {
+  const auth = await checkAuth();
+  if (!auth) return;
+  setUserInfo(auth.member);
+  initMobileToggle();
+  await loadBanners();
+})();
+
+async function loadBanners() {
+  const { data: banners } = await db.from('banners').select('*').order('order_index').order('created_at', { ascending: false });
+  const grid = document.getElementById('banners-grid');
+
+  if (!banners || banners.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>
+        <h3>Nenhum banner ainda</h3>
+        <p>Clique em "Novo Banner" para adicionar o primeiro.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = banners.map(b => `
+    <div class="banner-card">
+      <div class="banner-card-imgs">
+        ${b.desktop_image_url
+          ? `<img class="banner-img-desktop" src="${b.desktop_image_url}" alt="Desktop">`
+          : `<div class="banner-img-desktop banner-img-placeholder"><span>Desktop</span></div>`}
+        ${b.mobile_image_url
+          ? `<img class="banner-img-mobile" src="${b.mobile_image_url}" alt="Mobile">`
+          : `<div class="banner-img-mobile banner-img-placeholder"><span>Mobile</span></div>`}
+      </div>
+      <div class="banner-card-body">
+        <div class="fw-600" style="margin-bottom:0.25rem;">${b.title || 'Banner #' + b.order_index}</div>
+        <div class="text-muted text-sm">Ordem: ${b.order_index} · ${b.link ? '<a href="'+b.link+'" target="_blank" style="color:var(--info)">Link</a>' : 'Sem link'}</div>
+      </div>
+      <div class="banner-card-footer">
+        ${b.active ? '<span class="badge badge-active">Ativo</span>' : '<span class="badge badge-inactive">Inativo</span>'}
+        <div class="actions-cell">
+          <button class="btn btn-icon btn-ghost" title="Editar" onclick="editBanner('${b.id}')">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="btn btn-icon btn-danger" title="Excluir" onclick="deleteBanner('${b.id}')">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openModal(banner = null) {
+  editingId = banner?.id || null;
+  document.getElementById('modal-title').textContent = banner ? 'Editar Banner' : 'Novo Banner';
+  document.getElementById('banner-id').value = banner?.id || '';
+  document.getElementById('banner-title').value = banner?.title || '';
+  document.getElementById('banner-link').value = banner?.link || '';
+  document.getElementById('banner-order').value = banner?.order_index ?? 0;
+  document.getElementById('banner-active').checked = banner?.active !== false;
+  document.getElementById('desktop-url').value = banner?.desktop_image_url || '';
+  document.getElementById('mobile-url').value = banner?.mobile_image_url || '';
+
+  const dp = document.getElementById('desktop-preview');
+  const mp = document.getElementById('mobile-preview');
+  if (banner?.desktop_image_url) { dp.src = banner.desktop_image_url; dp.classList.add('show'); } else { dp.src=''; dp.classList.remove('show'); }
+  if (banner?.mobile_image_url)  { mp.src = banner.mobile_image_url;  mp.classList.add('show'); } else { mp.src=''; mp.classList.remove('show'); }
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  editingId = null;
+}
+
+async function editBanner(id) {
+  const { data } = await db.from('banners').select('*').eq('id', id).single();
+  if (data) openModal(data);
+}
+
+async function saveBanner() {
+  const btn = document.getElementById('save-btn');
+  btn.textContent = 'Salvando…';
+  btn.disabled = true;
+
+  try {
+    const desktopFile = document.getElementById('desktop-file').files[0];
+    const mobileFile  = document.getElementById('mobile-file').files[0];
+
+    let desktopUrl = document.getElementById('desktop-url').value;
+    let mobileUrl  = document.getElementById('mobile-url').value;
+
+    if (desktopFile) desktopUrl = await uploadImage(desktopFile, 'banners/desktop');
+    if (mobileFile)  mobileUrl  = await uploadImage(mobileFile,  'banners/mobile');
+
+    if (!desktopUrl || !mobileUrl) {
+      showToast('Por favor, envie as imagens Desktop e Mobile.', 'error');
+      return;
+    }
+
+    const payload = {
+      title:              document.getElementById('banner-title').value.trim() || null,
+      desktop_image_url:  desktopUrl,
+      mobile_image_url:   mobileUrl,
+      link:               document.getElementById('banner-link').value.trim() || null,
+      order_index:        parseInt(document.getElementById('banner-order').value) || 0,
+      active:             document.getElementById('banner-active').checked
+    };
+
+    if (editingId) {
+      const { error } = await db.from('banners').update(payload).eq('id', editingId);
+      if (error) throw error;
+      showToast('Banner atualizado!');
+    } else {
+      const { error } = await db.from('banners').insert(payload);
+      if (error) throw error;
+      showToast('Banner criado!');
+    }
+
+    closeModal();
+    await loadBanners();
+  } catch (err) {
+    showToast('Erro: ' + err.message, 'error');
+  } finally {
+    btn.textContent = 'Salvar';
+    btn.disabled = false;
+  }
+}
+
+async function deleteBanner(id) {
+  if (!confirm('Excluir este banner?')) return;
+  const { error } = await db.from('banners').delete().eq('id', id);
+  if (error) { showToast('Erro: ' + error.message, 'error'); return; }
+  showToast('Banner excluído.');
+  await loadBanners();
+}
+
+function setupFilePreview(inputId, previewId) {
+  document.getElementById(inputId).addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const p = document.getElementById(previewId);
+      p.src = ev.target.result;
+      p.classList.add('show');
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+setupFilePreview('desktop-file', 'desktop-preview');
+setupFilePreview('mobile-file',  'mobile-preview');
+
+document.getElementById('modal-overlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+</script>
+</body>
+</html>

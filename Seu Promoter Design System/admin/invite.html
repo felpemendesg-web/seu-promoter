@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aceitar Convite — Admin Seu Promoter</title>
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="../assets/images/logo-seu-promoter.svg" alt="Seu Promoter">
+      </div>
+
+      <div id="loading-state">
+        <div class="loading"><div class="spinner"></div>Verificando convite…</div>
+      </div>
+
+      <div id="invalid-state" style="display:none;">
+        <div class="alert alert-error">Este link de convite é inválido ou já foi utilizado.</div>
+        <a href="index.html" class="btn btn-secondary" style="width:100%; margin-top:1rem; justify-content:center;">Ir para o Login</a>
+      </div>
+
+      <div id="form-state" style="display:none;">
+        <h1 class="login-heading">Criar sua Conta</h1>
+        <p class="login-subheading">Você foi convidado para o painel administrativo</p>
+
+        <div class="alert alert-error" id="error-msg" style="display:none;"></div>
+
+        <form id="register-form">
+          <div class="form-group">
+            <label class="form-label">Nome Completo</label>
+            <input type="text" id="name" class="form-input" placeholder="Seu nome" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" id="email" class="form-input" placeholder="seu@email.com" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Senha</label>
+            <input type="password" id="password" class="form-input" placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirmar Senha</label>
+            <input type="password" id="confirm" class="form-input" placeholder="Repita a senha" required autocomplete="new-password">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%; padding:0.875rem;" id="register-btn">
+            Criar Conta e Entrar
+          </button>
+        </form>
+      </div>
+
+      <div id="success-state" style="display:none; text-align:center;">
+        <div class="alert alert-success" style="margin-bottom:1.5rem;">Conta criada com sucesso! Redirecionando…</div>
+        <div class="spinner" style="margin:0 auto;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-client.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const token  = params.get('token');
+    let inviteData = null;
+
+    (async () => {
+      if (!token) { showState('invalid'); return; }
+
+      const { data: invite, error } = await db
+        .from('invites')
+        .select('*')
+        .eq('token', token)
+        .eq('used', false)
+        .single();
+
+      if (error || !invite) { showState('invalid'); return; }
+
+      inviteData = invite;
+      showState('form');
+    })();
+
+    function showState(state) {
+      document.getElementById('loading-state').style.display = state === 'loading' ? 'block' : 'none';
+      document.getElementById('invalid-state').style.display = state === 'invalid' ? 'block' : 'none';
+      document.getElementById('form-state').style.display    = state === 'form'    ? 'block' : 'none';
+      document.getElementById('success-state').style.display = state === 'success' ? 'block' : 'none';
+    }
+
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn    = document.getElementById('register-btn');
+      const errEl  = document.getElementById('error-msg');
+      const name     = document.getElementById('name').value.trim();
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirm  = document.getElementById('confirm').value;
+
+      if (password !== confirm) {
+        errEl.textContent = 'As senhas não coincidem.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      btn.textContent = 'Criando conta…';
+      btn.disabled = true;
+      errEl.style.display = 'none';
+
+      const { data, error } = await db.auth.signUp({ email, password });
+
+      if (error) {
+        errEl.textContent = error.message;
+        errEl.style.display = 'block';
+        btn.textContent = 'Criar Conta e Entrar';
+        btn.disabled = false;
+        return;
+      }
+
+      // Insert into panel_members
+      await db.from('panel_members').insert({
+        id:    data.user.id,
+        name,
+        email,
+        role:  inviteData.role || 'editor'
+      });
+
+      // Mark invite as used
+      await db.from('invites').update({ used: true }).eq('token', token);
+
+      showState('success');
+
+      await db.auth.signInWithPassword({ email, password });
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
+    });
+  </script>
+</body>
+</html>

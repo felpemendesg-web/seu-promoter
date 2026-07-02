@@ -1,0 +1,459 @@
+/* Layout Classes */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.section {
+  padding: 5rem 0;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-black);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(247, 213, 56, 0.4);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 2px solid var(--color-black);
+  color: var(--color-black);
+}
+
+.btn-outline:hover {
+  background-color: var(--color-black);
+  color: var(--color-white);
+}
+
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  box-shadow: var(--shadow-sm);
+  padding: 1rem 0;
+  transition: padding var(--transition-normal);
+}
+
+.navbar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.brand-logo {
+  display: block;
+  width: 154px;
+  height: auto;
+  border-radius: 9px;
+}
+
+.brand-logo-footer {
+  width: 190px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-weight: 500;
+  color: var(--color-gray-800);
+}
+
+.nav-links a:hover {
+  color: var(--color-primary);
+}
+
+/* Hero Section */
+.hero {
+  padding: 5rem 0;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FFB703 100%);
+  color: var(--color-black);
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.hero-title {
+  font-size: 4rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  letter-spacing: -0.05em;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  opacity: 0.9;
+}
+
+/* Event Cards (Inspired by Zig/Shotgun) */
+.event-card {
+  background: var(--color-white);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.event-card-img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+  transition: transform var(--transition-normal);
+}
+
+@media (hover: hover) {
+  .event-card:hover .event-card-img {
+    transform: scale(1.05);
+  }
+}
+
+.event-card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.event-date {
+  color: var(--color-primary-hover);
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.event-title {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.event-location {
+  color: var(--color-gray-500);
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.event-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Footer (Inspired by Event Creators / Juca) */
+.footer {
+  background-color: var(--color-black);
+  color: var(--color-white);
+  padding: 4rem 0 2rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.footer-col h4 {
+  color: var(--color-primary);
+  margin-bottom: 1.5rem;
+}
+
+.footer-col ul {
+  list-style: none;
+}
+
+.footer-col ul li {
+  margin-bottom: 0.75rem;
+}
+
+.footer-col ul a {
+  color: var(--color-gray-200);
+}
+
+.footer-col ul a:hover {
+  color: var(--color-primary);
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  color: var(--color-gray-400);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .section {
+    padding: 3.5rem 0;
+  }
+
+  .navbar {
+    padding: 0.75rem 0;
+  }
+
+  .nav-logo {
+    flex-shrink: 0;
+  }
+
+  .brand-logo {
+    width: 126px;
+  }
+
+  .navbar .btn {
+    padding: 0.65rem 0.9rem;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .grid-3 {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .event-card-body {
+    padding: 1.25rem;
+  }
+
+  .event-footer {
+    gap: 1rem;
+  }
+
+  .footer {
+    padding: 3rem 0 1.5rem;
+  }
+
+  .footer-grid {
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .brand-logo {
+    width: 112px;
+  }
+
+  .navbar .btn {
+    font-size: 0;
+    gap: 0;
+    padding: 0.65rem;
+  }
+
+  .navbar .btn svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .event-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .event-footer .btn {
+    width: 100%;
+  }
+}
+
+/* WhatsApp CTA Banner Component */
+.whatsapp-banner {
+  background: linear-gradient(135deg, var(--color-black) 0%, #1c1c1c 100%);
+  border-radius: 20px;
+  padding: 3.5rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2.5rem;
+  color: var(--color-white);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.whatsapp-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(37, 211, 102, 0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.whatsapp-banner::after {
+  content: '';
+  position: absolute;
+  bottom: -50%;
+  left: -10%;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(247, 213, 56, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.whatsapp-banner-content {
+  flex: 1;
+  min-width: 280px;
+  position: relative;
+  z-index: 2;
+}
+
+.whatsapp-banner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(37, 211, 102, 0.12);
+  color: #25D366;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1.25rem;
+  border: 1px solid rgba(37, 211, 102, 0.2);
+}
+
+.whatsapp-banner-title {
+  font-size: 2.25rem;
+  color: var(--color-white);
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+.whatsapp-banner-desc {
+  color: var(--color-gray-400);
+  font-size: 1rem;
+  max-width: 560px;
+  line-height: 1.6;
+}
+
+.whatsapp-banner-action {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.btn-whatsapp-cta {
+  background: #25D366;
+  color: var(--color-black) !important;
+  padding: 1.1rem 2.2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all var(--transition-normal);
+}
+
+.btn-whatsapp-cta:hover {
+  background: #20ba59;
+  box-shadow: 0 12px 30px rgba(37, 211, 102, 0.45);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .whatsapp-banner {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    gap: 1.75rem;
+  }
+
+  .whatsapp-banner-title {
+    font-size: 1.75rem;
+  }
+
+  .whatsapp-banner-desc {
+    margin: 0 auto;
+  }
+
+  .btn-whatsapp-cta {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Social Icon Hover Efeito */
+.social-icon {
+  color: var(--color-gray-200);
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.social-icon:hover {
+  color: var(--color-black) !important;
+  background: var(--color-primary);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(247, 213, 56, 0.35);
+}
+
+

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Admin Seu Promoter</title>
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="../assets/images/logo-seu-promoter.svg" alt="Seu Promoter">
+      </div>
+
+      <h1 class="login-heading">Acessar Painel</h1>
+      <p class="login-subheading">Entre com suas credenciais para continuar</p>
+
+      <div class="alert alert-error" id="error-msg" style="display:none"></div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="email" class="form-input" placeholder="seu@email.com" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Senha</label>
+          <input type="password" id="password" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; padding:0.875rem;" id="login-btn">
+          Entrar
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <a href="../index.html" style="color: var(--text-dim);">← Voltar ao site</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-client.js"></script>
+  <script>
+    (async () => {
+      // Redirect to setup if no members yet
+      const { count } = await db.from('panel_members').select('*', { count: 'exact', head: true });
+      if (count === 0) { window.location.href = 'setup.html'; return; }
+
+      // Redirect to dashboard if already logged in
+      const { data: { session } } = await db.auth.getSession();
+      if (session) {
+        const { data: member } = await db.from('panel_members').select('id').eq('id', session.user.id).single();
+        if (member) { window.location.href = 'dashboard.html'; return; }
+      }
+    })();
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn   = document.getElementById('login-btn');
+      const errEl = document.getElementById('error-msg');
+
+      btn.textContent = 'Entrando…';
+      btn.disabled = true;
+      errEl.style.display = 'none';
+
+      const email    = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const { data, error } = await db.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        errEl.textContent = 'Email ou senha incorretos.';
+        errEl.style.display = 'block';
+        btn.textContent = 'Entrar';
+        btn.disabled = false;
+        return;
+      }
+
+      const { data: member } = await db.from('panel_members').select('*').eq('id', data.user.id).single();
+
+      if (!member) {
+        await db.auth.signOut();
+        errEl.textContent = 'Você não tem permissão para acessar este painel.';
+        errEl.style.display = 'block';
+        btn.textContent = 'Entrar';
+        btn.disabled = false;
+        return;
+      }
+
+      window.location.href = 'dashboard.html';
+    });
+  </script>
+</body>
+</html>

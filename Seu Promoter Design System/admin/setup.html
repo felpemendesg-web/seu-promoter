@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuração Inicial — Admin Seu Promoter</title>
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="../assets/images/logo-seu-promoter.svg" alt="Seu Promoter">
+      </div>
+
+      <h1 class="login-heading">Primeiro Acesso</h1>
+      <p class="login-subheading">Crie a conta administradora do painel</p>
+
+      <div class="alert alert-info" style="margin-bottom:1.5rem; font-size:0.8rem;">
+        Esta página só está disponível quando nenhum administrador existe ainda. Após criar a conta, ela será bloqueada automaticamente.
+      </div>
+
+      <div class="alert alert-error" id="error-msg" style="display:none"></div>
+
+      <form id="setup-form">
+        <div class="form-group">
+          <label class="form-label">Nome Completo</label>
+          <input type="text" id="name" class="form-input" placeholder="Seu nome" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="email" class="form-input" placeholder="admin@email.com" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Senha</label>
+          <input type="password" id="password" class="form-input" placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirmar Senha</label>
+          <input type="password" id="confirm" class="form-input" placeholder="Repita a senha" required autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; padding:0.875rem;" id="setup-btn">
+          Criar Conta Admin
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-client.js"></script>
+  <script>
+    (async () => {
+      const { count } = await db.from('panel_members').select('*', { count: 'exact', head: true });
+      if (count > 0) { window.location.href = 'index.html'; }
+    })();
+
+    document.getElementById('setup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn   = document.getElementById('setup-btn');
+      const errEl = document.getElementById('error-msg');
+
+      const name     = document.getElementById('name').value.trim();
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirm  = document.getElementById('confirm').value;
+
+      if (password !== confirm) {
+        errEl.textContent = 'As senhas não coincidem.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      btn.textContent = 'Criando conta…';
+      btn.disabled = true;
+      errEl.style.display = 'none';
+
+      const { data, error } = await db.auth.signUp({ email, password });
+
+      if (error) {
+        errEl.textContent = error.message;
+        errEl.style.display = 'block';
+        btn.textContent = 'Criar Conta Admin';
+        btn.disabled = false;
+        return;
+      }
+
+      const { error: insertError } = await db.from('panel_members').insert({
+        id: data.user.id,
+        name,
+        email,
+        role: 'admin'
+      });
+
+      if (insertError) {
+        errEl.textContent = 'Erro ao salvar perfil: ' + insertError.message;
+        errEl.style.display = 'block';
+        btn.textContent = 'Criar Conta Admin';
+        btn.disabled = false;
+        return;
+      }
+
+      await db.auth.signInWithPassword({ email, password });
+      window.location.href = 'dashboard.html';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eventos — Admin Seu Promoter</title>
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="../assets/images/logo-seu-promoter.svg" alt="Seu Promoter">
+    </div>
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Menu</span>
+      <a href="dashboard.html" class="nav-item">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="events.html" class="nav-item active">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Eventos
+      </a>
+      <a href="categories.html" class="nav-item">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+        Categorias
+      </a>
+      <a href="banners.html" class="nav-item">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>
+        Banners
+      </a>
+      <a href="members.html" class="nav-item">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Membros
+      </a>
+      <span class="nav-section-label">Site</span>
+      <a href="../index.html" target="_blank" class="nav-item">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Ver Site
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sidebar-avatar">A</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="sidebar-user-name">…</div>
+          <div class="sidebar-user-role" id="sidebar-user-role"></div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="width:100%;" onclick="logout()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sair
+      </button>
+    </div>
+  </aside>
+
+  <div class="sidebar-backdrop" id="backdrop"></div>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="topbar-left">
+        <button class="mobile-toggle" id="mobile-toggle" aria-label="Menu">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <h1>Eventos</h1>
+      </div>
+      <button class="btn btn-primary" onclick="openModal()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Novo Evento
+      </button>
+    </div>
+
+    <div class="admin-content">
+      <div class="table-card">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Evento</th>
+                <th>Data</th>
+                <th>Categoria</th>
+                <th>Destaque</th>
+                <th>Ativo</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="events-body">
+              <tr><td colspan="6"><div class="loading"><div class="spinner"></div>Carregando…</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Novo Evento</span>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="event-id">
+      <div class="form-group">
+        <label class="form-label">Título *</label>
+        <input type="text" id="event-title" class="form-input" placeholder="Nome do evento" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Data</label>
+          <input type="date" id="event-date" class="form-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Horário</label>
+          <input type="text" id="event-time" class="form-input" placeholder="Ex: 22h00">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Local</label>
+        <input type="text" id="event-location" class="form-input" placeholder="Nome do local e cidade">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Categoria</label>
+        <select id="event-category" class="form-input">
+          <option value="">Sem categoria</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Link do Ingresso</label>
+        <input type="url" id="event-ticket-url" class="form-input" placeholder="https://…">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Imagem do Evento</label>
+        <div class="upload-zone" id="event-upload-zone">
+          <input type="file" id="event-image-file" accept="image/*">
+          <div class="upload-icon">
+            <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <p class="upload-text">Clique ou arraste uma imagem</p>
+          <p class="upload-hint">JPG, PNG ou WEBP — proporção 4:5 recomendada</p>
+        </div>
+        <img class="img-preview" id="event-img-preview" alt="Preview">
+        <input type="hidden" id="event-image-url">
+      </div>
+      <div style="display:flex; gap:1.5rem; flex-wrap:wrap;">
+        <label style="display:flex; align-items:center; gap:0.625rem; cursor:pointer; font-size:0.875rem;">
+          <div class="toggle">
+            <input type="checkbox" id="event-featured">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </div>
+          Em destaque
+        </label>
+        <label style="display:flex; align-items:center; gap:0.625rem; cursor:pointer; font-size:0.875rem;">
+          <div class="toggle">
+            <input type="checkbox" id="event-active" checked>
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </div>
+          Ativo (visível no site)
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" id="save-btn" onclick="saveEvent()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/supabase-client.js"></script>
+<script src="assets/js/auth.js"></script>
+<script>
+let categories = [];
+let editingId = null;
+let uploadedImageUrl = null;
+
+(async () => {
+  const auth = await checkAuth();
+  if (!auth) return;
+  setUserInfo(auth.member);
+  initMobileToggle();
+  await loadCategories();
+  await loadEvents();
+})();
+
+async function loadCategories() {
+  const { data } = await db.from('categories').select('id, name').eq('active', true).order('name');
+  categories = data || [];
+  const sel = document.getElementById('event-category');
+  sel.innerHTML = '<option value="">Sem categoria</option>';
+  categories.forEach(c => {
+    sel.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+  });
+}
+
+async function loadEvents() {
+  const { data: events } = await db
+    .from('events')
+    .select('*, categories(name)')
+    .order('created_at', { ascending: false });
+
+  const tbody = document.getElementById('events-body');
+
+  if (!events || events.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6">
+      <div class="empty-state">
+        <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <h3>Nenhum evento ainda</h3>
+        <p>Clique em "Novo Evento" para adicionar o primeiro.</p>
+      </div>
+    </td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = events.map(ev => `
+    <tr>
+      <td>
+        <div class="icon-cell">
+          ${ev.image_url
+            ? `<img class="thumb" src="${ev.image_url}" alt="${ev.title}">`
+            : `<div class="thumb-placeholder"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`
+          }
+          <span class="fw-600">${ev.title}</span>
+        </div>
+      </td>
+      <td class="text-muted text-sm">${ev.date ? new Date(ev.date + 'T00:00:00').toLocaleDateString('pt-BR') : '—'}${ev.time ? ' · ' + ev.time : ''}</td>
+      <td class="text-muted text-sm">${ev.categories?.name ?? '—'}</td>
+      <td>${ev.featured ? '<span class="badge badge-featured">⭐ Destaque</span>' : '<span class="text-dim text-sm">—</span>'}</td>
+      <td>${ev.active ? '<span class="badge badge-active">Ativo</span>' : '<span class="badge badge-inactive">Inativo</span>'}</td>
+      <td>
+        <div class="actions-cell">
+          <button class="btn btn-icon btn-ghost" title="Editar" onclick="editEvent('${ev.id}')">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="btn btn-icon btn-danger" title="Excluir" onclick="deleteEvent('${ev.id}', '${ev.title.replace(/'/g, "\\'")}')">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openModal(event = null) {
+  editingId = event?.id || null;
+  uploadedImageUrl = null;
+
+  document.getElementById('modal-title').textContent = event ? 'Editar Evento' : 'Novo Evento';
+  document.getElementById('event-id').value = event?.id || '';
+  document.getElementById('event-title').value = event?.title || '';
+  document.getElementById('event-date').value = event?.date || '';
+  document.getElementById('event-time').value = event?.time || '';
+  document.getElementById('event-location').value = event?.location || '';
+  document.getElementById('event-ticket-url').value = event?.ticket_url || '';
+  document.getElementById('event-category').value = event?.category_id || '';
+  document.getElementById('event-featured').checked = event?.featured || false;
+  document.getElementById('event-active').checked = event?.active !== false;
+  document.getElementById('event-image-url').value = event?.image_url || '';
+
+  const preview = document.getElementById('event-img-preview');
+  if (event?.image_url) {
+    preview.src = event.image_url;
+    preview.classList.add('show');
+  } else {
+    preview.src = '';
+    preview.classList.remove('show');
+  }
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  editingId = null;
+  uploadedImageUrl = null;
+}
+
+async function editEvent(id) {
+  const { data } = await db.from('events').select('*').eq('id', id).single();
+  if (data) openModal(data);
+}
+
+async function saveEvent() {
+  const btn = document.getElementById('save-btn');
+  btn.textContent = 'Salvando…';
+  btn.disabled = true;
+
+  try {
+    const imageFile = document.getElementById('event-image-file').files[0];
+    let imageUrl = document.getElementById('event-image-url').value;
+
+    if (imageFile) {
+      imageUrl = await uploadImage(imageFile, 'events');
+    }
+
+    const payload = {
+      title:       document.getElementById('event-title').value.trim(),
+      date:        document.getElementById('event-date').value || null,
+      time:        document.getElementById('event-time').value.trim() || null,
+      location:    document.getElementById('event-location').value.trim() || null,
+      ticket_url:  document.getElementById('event-ticket-url').value.trim() || null,
+      category_id: document.getElementById('event-category').value || null,
+      featured:    document.getElementById('event-featured').checked,
+      active:      document.getElementById('event-active').checked,
+      image_url:   imageUrl || null
+    };
+
+    if (!payload.title) { showToast('O título é obrigatório.', 'error'); return; }
+
+    if (editingId) {
+      const { error } = await db.from('events').update(payload).eq('id', editingId);
+      if (error) throw error;
+      showToast('Evento atualizado com sucesso!');
+    } else {
+      const { error } = await db.from('events').insert(payload);
+      if (error) throw error;
+      showToast('Evento criado com sucesso!');
+    }
+
+    closeModal();
+    await loadEvents();
+  } catch (err) {
+    showToast('Erro: ' + err.message, 'error');
+  } finally {
+    btn.textContent = 'Salvar';
+    btn.disabled = false;
+  }
+}
+
+async function deleteEvent(id, title) {
+  if (!confirm(`Excluir o evento "${title}"? Esta ação não pode ser desfeita.`)) return;
+
+  const { error } = await db.from('events').delete().eq('id', id);
+  if (error) { showToast('Erro ao excluir: ' + error.message, 'error'); return; }
+  showToast('Evento excluído.');
+  await loadEvents();
+}
+
+// Image preview on file select
+document.getElementById('event-image-file').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const preview = document.getElementById('event-img-preview');
+    preview.src = ev.target.result;
+    preview.classList.add('show');
+  };
+  reader.readAsDataURL(file);
+});
+
+// Close modal on overlay click
+document.getElementById('modal-overlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+</script>
+</body>
+</html>
