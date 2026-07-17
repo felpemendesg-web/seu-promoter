@@ -50,8 +50,8 @@
   <script src="assets/js/supabase-client.js"></script>
   <script>
     (async () => {
-      const { count } = await db.from('panel_members').select('*', { count: 'exact', head: true });
-      if (count > 0) { window.location.href = 'index.html'; }
+      const { data: exists } = await db.rpc('panel_members_exist');
+      if (exists) { window.location.href = 'index.html'; }
     })();
 
     document.getElementById('setup-form').addEventListener('submit', async (e) => {
@@ -84,15 +84,10 @@
         return;
       }
 
-      const { error: insertError } = await db.from('panel_members').insert({
-        id: data.user.id,
-        name,
-        email,
-        role: 'admin'
-      });
+      const { error: rpcError } = await db.rpc('claim_first_admin', { p_name: name });
 
-      if (insertError) {
-        errEl.textContent = 'Erro ao salvar perfil: ' + insertError.message;
+      if (rpcError) {
+        errEl.textContent = 'Erro ao criar conta admin: ' + rpcError.message;
         errEl.style.display = 'block';
         btn.textContent = 'Criar Conta Admin';
         btn.disabled = false;

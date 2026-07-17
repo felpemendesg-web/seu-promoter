@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eventos em Florianópolis | Seu Promoter</title>
+  <meta name="description"
+    content="Encontre os melhores eventos em Florianópolis por gênero. Garanta seu ingresso via Seu Promoter.">
+  <meta property="og:title" content="Eventos em Florianópolis — Seu Promoter">
+  <meta property="og:description" content="Os melhores eventos de Floripa em um só lugar.">
+  <meta property="og:type" content="website">
+  <meta name="robots" content="index, follow">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/globals.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    .category-hero {
+      padding: 7rem 0 4rem;
+      background: linear-gradient(160deg, #111111 0%, #1a1a2e 100%);
+      color: var(--color-white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .category-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('assets/images/reveillon.jpg') center/cover;
+      opacity: 0.12;
+    }
+
+    .category-hero .container {
+      position: relative;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 1.5rem;
+    }
+
+    .breadcrumb a { color: rgba(255, 255, 255, 0.5); }
+    .breadcrumb a:hover { color: var(--color-primary); }
+    .breadcrumb span { color: rgba(255, 255, 255, 0.5); }
+
+    .category-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--color-primary);
+      color: var(--color-black);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+
+    .category-hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--color-white);
+      margin-bottom: 1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .category-hero p {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.75);
+      max-width: 580px;
+      line-height: 1.7;
+    }
+
+    .category-meta { display: flex; gap: 2rem; margin-top: 2rem; }
+    .category-meta-item { display: flex; flex-direction: column; gap: 0.25rem; }
+    .category-meta-item span:first-child { font-size: 1.75rem; font-weight: 800; color: var(--color-primary); }
+    .category-meta-item span:last-child {
+      font-size: 0.8rem; color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+
+    .filters-section {
+      background: var(--color-white);
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--color-gray-200);
+      position: sticky;
+      top: 68px;
+      z-index: 100;
+    }
+
+    .filters-row { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .filter-label { font-size: 0.8rem; font-weight: 600; color: var(--color-gray-800); margin-right: 0.25rem; }
+
+    .filter-chip {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.45rem 1rem; border-radius: 999px;
+      font-size: 0.8rem; font-weight: 500; cursor: pointer;
+      border: 1.5px solid var(--color-gray-200);
+      background: var(--color-white); color: var(--color-gray-800);
+      transition: all var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .filter-chip:hover { background: var(--color-black); color: var(--color-white); border-color: var(--color-black); }
+    .filter-chip.active-yellow {
+      background: var(--color-primary); color: var(--color-black);
+      border-color: var(--color-primary); font-weight: 600;
+    }
+
+    .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .results-count { font-size: 0.875rem; color: var(--color-gray-800); }
+    .results-count strong { color: var(--color-black); }
+
+    .empty-events {
+      text-align: center; padding: 4rem 1rem; color: var(--color-gray-500);
+    }
+    .empty-events h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--color-black); }
+
+    @media (max-width: 768px) {
+      .category-hero h1 { font-size: 2.25rem; }
+      .category-meta { gap: 1.25rem; }
+      .filters-row { gap: 0.5rem; }
+      .filters-section { top: 60px; }
+    }
+
+    @media (max-width: 480px) {
+      .nav-links { display: none; }
+      .category-hero h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="container">
+      <a href="index.html" class="nav-logo" aria-label="Seu Promoter Floripa"><img
+          src="assets/images/logo-seu-promoter.svg" alt="Seu Promoter Floripa" class="brand-logo"></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="genero.html?genero=P12 Jurerê">P12 Jurerê</a></li>
+        <li><a href="genero.html?genero=Stage">Stage</a></li>
+        <li><a href="genero.html?genero=Carnaval">Carnaval</a></li>
+        <li><a href="genero.html?genero=Réveillon">Réveillon</a></li>
+        <li><a href="genero.html">Outros Eventos</a></li>
+      </ul>
+      <a href="https://chat.whatsapp.com/B6zgGEb4gGm3YR0DasbXNB" target="_blank" rel="noopener" class="btn"
+        style="background: var(--color-black); color: var(--color-white); font-size: 0.875rem; gap: 0.4rem; align-items: center;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"
+          style="display: block;">
+          <path
+            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.455 5.703 1.456h.004c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+        Comunidade
+      </a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="category-hero">
+    <div class="container">
+      <nav class="breadcrumb">
+        <a href="index.html">Início</a>
+        <i data-lucide="chevron-right" style="width: 12px; height: 12px;"></i>
+        <span>Gêneros</span>
+        <i data-lucide="chevron-right" style="width: 12px; height: 12px;"></i>
+        <span style="color: var(--color-primary);" id="bc-genre">Todos</span>
+      </nav>
+
+      <div class="category-badge animate-fade-in">
+        <i data-lucide="music-2" style="width: 14px; height: 14px;" id="genre-badge-icon"></i>
+        Gênero
+      </div>
+
+      <h1 class="animate-slide-up" id="genre-title">Todos os Eventos</h1>
+      <p class="animate-slide-up" style="animation-delay: 100ms;" id="genre-desc">
+        Encontre aqui os melhores eventos em Floripa e garanta seu ingresso.
+      </p>
+
+      <div class="category-meta animate-slide-up" style="animation-delay: 200ms;">
+        <div class="category-meta-item">
+          <span id="events-count">…</span>
+          <span>Eventos</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILTROS -->
+  <div class="filters-section">
+    <div class="container">
+      <div class="filters-row" id="filters-row">
+        <span class="filter-label">Filtrar:</span>
+        <a href="genero.html" class="filter-chip" id="chip-all">
+          <i data-lucide="check" style="width: 12px; height: 12px;"></i>
+          Todos
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTAGEM -->
+  <section class="section">
+    <div class="container">
+      <div class="results-header reveal-on-scroll">
+        <p class="results-count" id="results-count"><strong>Carregando…</strong></p>
+      </div>
+
+      <div class="grid-3" id="events-grid"></div>
+
+      <div class="empty-events" id="empty-state" style="display:none;">
+        <h3>Nenhum evento encontrado</h3>
+        <p>Ainda não há eventos cadastrados neste gênero. Volte em breve!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="index.html" class="nav-logo" aria-label="Seu Promoter Floripa"><img
+              src="assets/images/logo-seu-promoter.svg" alt="Seu Promoter Floripa"
+              class="brand-logo brand-logo-footer"></a>
+        </div>
+        <div class="footer-col">
+          <h4>Institucional</h4>
+          <ul>
+            <li><a href="#">Contato</a></li>
+            <li><a href="#">Política de Privacidade</a></li>
+            <li><a href="#">Termos de Uso</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Siga-nos</h4>
+          <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+            <a href="https://www.instagram.com/seupromoterfloripa/" target="_blank" rel="noopener" class="social-icon"
+              aria-label="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"
+                style="display: block;">
+                <path
+                  d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204 0.013-3.583 0.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
+              </svg>
+            </a>
+            <a href="https://www.tiktok.com/@seupromoterfloripa?_r=1&_t=ZS-97R5voLqK6J" target="_blank" rel="noopener" class="social-icon" aria-label="TikTok">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display: block;">
+                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.95v7.4c-.01 1.94-.69 3.84-1.95 5.3-1.28 1.45-3.08 2.38-5.02 2.62-1.92.23-3.92-.12-5.59-1.12-1.64-1-2.9-2.52-3.48-4.32-.57-1.81-.46-3.8.31-5.54.78-1.74 2.14-3.17 3.86-3.95 1.74-.78 3.73-.9 5.56-.34v4.13c-1.1-.28-2.29-.16-3.3.38-1.02.55-1.78 1.48-2.11 2.59-.33 1.1-.15 2.3.49 3.25.64.93 1.64 1.54 2.8 1.68 1.15.13 2.35-.16 3.28-.84.94-.68 1.54-1.72 1.68-2.87V.02z"/>
+              </svg>
+            </a>
+          </div>
+          <p style="color: var(--color-gray-400); font-size: 0.8rem; line-height: 1.6;">
+            📍 Florianópolis, SC<br>
+            contato@seupromoter.com.br
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Seu Promoter. Todos os direitos reservados. Florianópolis, SC.
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-client.js"></script>
+  <script src="assets/js/site-nav.js"></script>
+  <script>
+    const esc = (s) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const safeUrl = (u) => { try { const p = new URL(u, location.origin).protocol; return (p === 'http:' || p === 'https:') ? u : '#'; } catch { return '#'; } };
+    const fmtDate = (d) => d ? new Date(d + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '') : '';
+
+    (async () => {
+      const genre = new URLSearchParams(location.search).get('genero');
+
+      // Cabeçalho
+      if (genre) {
+        document.title = `${genre} em Florianópolis — Eventos | Seu Promoter`;
+        document.getElementById('bc-genre').textContent = genre;
+        document.getElementById('genre-title').textContent = `${genre} em Florianópolis`;
+        document.getElementById('genre-desc').textContent =
+          `Encontre aqui os melhores eventos de ${genre.toLowerCase()} em Floripa e garanta seu ingresso.`;
+      }
+
+      // Chips de gênero (categorias cadastradas no admin)
+      const { data: cats } = await db
+        .from('categories')
+        .select('name, icon')
+        .eq('active', true)
+        .order('name');
+
+      const genres = (cats || []).map(c => ({ name: c.name, icon: c.icon || 'music-2' }));
+
+      const filtersRow = document.getElementById('filters-row');
+      genres.forEach(g => {
+        const isActive = genre && genre.toLowerCase() === g.name.toLowerCase();
+        filtersRow.insertAdjacentHTML('beforeend', `
+          <a href="genero.html?genero=${encodeURIComponent(g.name)}" class="filter-chip${isActive ? ' active-yellow' : ''}">
+            <i data-lucide="${esc(g.icon)}" style="width: 12px; height: 12px;"></i>
+            ${esc(g.name)}
+          </a>
+        `);
+        if (isActive) document.getElementById('genre-badge-icon').setAttribute('data-lucide', g.icon);
+      });
+      if (!genre) document.getElementById('chip-all').classList.add('active-yellow');
+
+      // Eventos
+      let query = db.from('events').select('*').eq('active', true).order('date', { ascending: true });
+      if (genre) query = query.ilike('genre', genre);
+      const { data: events } = await query;
+
+      const grid = document.getElementById('events-grid');
+      const count = events?.length || 0;
+
+      document.getElementById('events-count').textContent = count;
+      document.getElementById('results-count').innerHTML =
+        `<strong>${count} evento${count === 1 ? '' : 's'}</strong> encontrado${count === 1 ? '' : 's'}${genre ? ' em ' + esc(genre) : ''}`;
+
+      if (count === 0) {
+        document.getElementById('empty-state').style.display = '';
+      } else {
+        grid.innerHTML = events.map((ev, i) => `
+          <article class="event-card reveal-on-scroll delay-${((i % 3) + 1) * 100} hover-glow is-visible">
+            <div style="overflow: hidden;">
+              <img src="${esc(safeUrl(ev.image_url)) || 'assets/images/show.jpg'}" alt="${esc(ev.title)}" class="event-card-img">
+            </div>
+            <div class="event-card-body">
+              <span class="event-date">${fmtDate(ev.date)}${ev.time ? ' · ' + esc(ev.time) : ''}</span>
+              <h3 class="event-title">${esc(ev.title)}</h3>
+              ${ev.location ? `<p class="event-location"><i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>${esc(ev.location)}</p>` : ''}
+              <div class="event-footer">
+                <a href="evento.html?id=${ev.id}" class="btn btn-primary">Ver Evento</a>
+              </div>
+            </div>
+          </article>
+        `).join('');
+      }
+
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+      document.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('is-visible'));
+    })();
+  </script>
+  <script src="assets/js/interactions.js"></script>
+</body>
+
+</html>

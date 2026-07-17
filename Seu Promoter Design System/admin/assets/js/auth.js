@@ -1,5 +1,10 @@
 // Shared auth helpers — included on every protected admin page
 
+// Escapa HTML antes de injetar dados do banco via innerHTML.
+function esc(s) {
+  return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 async function checkAuth() {
   const { data: { session } } = await db.auth.getSession();
   if (!session) {

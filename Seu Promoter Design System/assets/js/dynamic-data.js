@@ -1,11 +1,23 @@
-// Carrega dados dinâmicos do Supabase e renderiza no site público
+// Carrega dados dinâmicos do Supabase e renderiza no site público.
+// O site exibe apenas o que está cadastrado no banco — seções sem dados ficam ocultas.
 
 document.addEventListener('DOMContentLoaded', async () => {
-  await Promise.all([loadBanners(), loadFeaturedEvents(), loadEvents(), loadCategories()]);
+  await Promise.all([loadBanners(), loadFeaturedEvents(), loadEvents(), loadGenres()]);
 });
+
+function esc(s) {
+  return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// Só deixa passar http(s); bloqueia javascript:, data: etc. vindos do banco.
+function safeUrl(u) {
+  try { const p = new URL(u, location.origin).protocol; return (p === 'http:' || p === 'https:') ? u : '#'; }
+  catch { return '#'; }
+}
 
 // ── Banners ───────────────────────────────────────────────
 async function loadBanners() {
+  const section   = document.getElementById('banner-section');
   const track     = document.querySelector('.main-banner-track');
   const dotsWrap  = document.querySelector('.main-banner-dots');
   if (!track) return;
@@ -17,14 +29,19 @@ async function loadBanners() {
     .order('order_index')
     .order('created_at');
 
-  if (!banners || banners.length === 0) return;
+  if (!banners || banners.length === 0) {
+    // Sem banner: compensa a navbar fixa na primeira seção visível
+    const first = document.getElementById('featured-section') || document.querySelector('.hero');
+    if (first) first.style.paddingTop = '8rem';
+    return;
+  }
 
   track.innerHTML = banners.map(b => `
     <div class="main-banner-slide">
-      ${b.link ? `<a href="${b.link}">` : '<div>'}
+      ${b.link ? `<a href="${esc(safeUrl(b.link))}">` : '<div>'}
         <picture>
-          <source media="(max-width: 768px)" srcset="${b.mobile_image_url}">
-          <img src="${b.desktop_image_url}" alt="${b.title || 'Banner'}">
+          <source media="(max-width: 768px)" srcset="${esc(safeUrl(b.mobile_image_url))}">
+          <img src="${esc(safeUrl(b.desktop_image_url))}" alt="${esc(b.title) || 'Banner'}">
         </picture>
       ${b.link ? '</a>' : '</div>'}
     </div>
@@ -36,103 +53,104 @@ async function loadBanners() {
     ).join('');
   }
 
-  // Re-init banner carousel (interactions.js já cobre se chamado depois do DOM)
+  if (section) section.style.display = '';
   initBannerCarousel();
 }
 
-// ── Featured Events ───────────────────────────────────────
+// ── Card de evento (compartilhado) ────────────────────────
+function eventCard(ev, i, featured = false) {
+  const dateStr = `${formatDate(ev.date)}${ev.time ? ' · ' + esc(ev.time) : ''}`;
+  const cls = featured ? 'event-card-featured hover-glow hover-lift' : `event-card reveal-on-scroll delay-${((i % 3) + 1) * 100} hover-glow`;
+  return `
+    <article class="${cls}">
+      ${featured ? '<span class="badge-destaque">⭐ Destaque</span>' : ''}
+      <div style="overflow:hidden;">
+        <img src="${esc(safeUrl(ev.image_url)) || 'assets/images/show.jpg'}" alt="${esc(ev.title)}" class="${featured ? 'feat-img' : 'event-card-img'}">
+      </div>
+      <div class="event-card-body">
+        <span class="event-date">${dateStr}</span>
+        <h3 class="event-title">${esc(ev.title)}</h3>
+        ${ev.location ? `<p class="event-location"><i data-lucide="map-pin" style="width:14px;height:14px;"></i>${esc(ev.location)}</p>` : ''}
+        <div class="event-footer">
+          <a href="evento.html?id=${ev.id}" class="btn btn-primary">Ver Evento</a>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+// ── Eventos em destaque ────────────────────────────────────
 async function loadFeaturedEvents() {
   const grid = document.querySelector('.featured-grid');
   if (!grid) return;
 
   const { data: events } = await db
     .from('events')
-    .select('*, categories(name)')
+    .select('*')
     .eq('active', true)
     .eq('featured', true)
     .order('date', { ascending: true })
-    .limit(6);
+    .limit(8);
 
   if (!events || events.length === 0) return;
 
-  grid.innerHTML = events.map(ev => `
-    <article class="event-card-featured hover-glow hover-lift">
-      <span class="badge-destaque">⭐ Destaque</span>
-      <div style="overflow:hidden;">
-        <img src="${ev.image_url || 'assets/images/show.jpg'}" alt="${ev.title}" class="feat-img">
-      </div>
-      <div class="event-card-body">
-        <span class="event-date">${formatDate(ev.date)}${ev.time ? ' · ' + ev.time : ''}</span>
-        <h3 class="event-title">${ev.title}</h3>
-        ${ev.location ? `<p class="event-location"><i data-lucide="map-pin" style="width:14px;height:14px;"></i>${ev.location}</p>` : ''}
-        <div class="event-footer">
-          <a href="${ev.ticket_url || 'evento.html?id=' + ev.id}" class="btn btn-primary"${ev.ticket_url ? ' target="_blank" rel="noopener"' : ''}>Ver Evento</a>
-        </div>
-      </div>
-    </article>
-  `).join('');
+  grid.innerHTML = events.map((ev, i) => eventCard(ev, i, true)).join('');
+  const section = document.getElementById('featured-section');
+  if (section) section.style.display = '';
 
   if (typeof lucide !== 'undefined') lucide.createIcons();
+  revealAll(grid);
 }
 
-// ── All Events ─────────────────────────────────────────────
+// ── Próximos eventos ───────────────────────────────────────
 async function loadEvents() {
   const grid = document.getElementById('events-grid');
   if (!grid) return;
 
   const { data: events } = await db
     .from('events')
-    .select('*, categories(name)')
+    .select('*')
     .eq('active', true)
     .order('date', { ascending: true })
     .limit(9);
 
   if (!events || events.length === 0) return;
 
-  grid.innerHTML = events.map((ev, i) => `
-    <article class="event-card reveal-on-scroll delay-${((i % 3) + 1) * 100} hover-glow">
-      <div style="overflow:hidden;">
-        <img src="${ev.image_url || 'assets/images/show.jpg'}" alt="${ev.title}" class="event-card-img">
-      </div>
-      <div class="event-card-body">
-        <span class="event-date">${formatDate(ev.date)}${ev.time ? ' · ' + ev.time : ''}</span>
-        <h3 class="event-title">${ev.title}</h3>
-        ${ev.location ? `<p class="event-location"><i data-lucide="map-pin" style="width:14px;height:14px;"></i>${ev.location}</p>` : ''}
-        <div class="event-footer">
-          <a href="${ev.ticket_url || 'evento.html?id=' + ev.id}" class="btn btn-primary"${ev.ticket_url ? ' target="_blank" rel="noopener"' : ''}>Ver Evento</a>
-        </div>
-      </div>
-    </article>
-  `).join('');
+  grid.innerHTML = events.map((ev, i) => eventCard(ev, i)).join('');
+  const section = document.getElementById('upcoming-section');
+  if (section) section.style.display = '';
 
   if (typeof lucide !== 'undefined') lucide.createIcons();
+  revealAll(grid);
 }
 
-// ── Categories ─────────────────────────────────────────────
-async function loadCategories() {
-  const grid = document.getElementById('categories-grid');
+// ── Explorar por Gênero ────────────────────────────────────
+// Exibe as categorias cadastradas no admin com "Exibir no carrossel" ativo.
+async function loadGenres() {
+  const grid = document.getElementById('genres-grid');
   if (!grid) return;
 
   const { data: cats } = await db
     .from('categories')
-    .select('*')
+    .select('name, icon')
     .eq('active', true)
+    .eq('show_in_explore', true)
     .order('name');
 
-  if (!cats || cats.length === 0) return;
+  const genres = (cats || []).map(c => ({ name: c.name, icon: c.icon || 'music-2' }));
+  if (genres.length === 0) return;
 
-  const items = cats.map((c, i) => `
-    <a href="categoria.html?categoria=${c.slug}" class="category-card reveal-on-scroll delay-${(i % 5 + 1) * 100}">
+  const items = genres.map((g, i) => `
+    <a href="genero.html?genero=${encodeURIComponent(g.name)}" class="category-card reveal-on-scroll delay-${(i % 5 + 1) * 100}">
       <div class="category-icon">
-        <i data-lucide="${c.icon || 'calendar'}" style="width:24px;height:24px;"></i>
+        <i data-lucide="${esc(g.icon)}" style="width:24px;height:24px;"></i>
       </div>
-      <span class="category-name">${c.name}</span>
+      <span class="category-name">${esc(g.name)}</span>
     </a>
   `).join('');
 
-  // Keep "Ver Todos" at the end
   grid.innerHTML = items + `
-    <a href="categoria.html" class="category-card reveal-on-scroll">
+    <a href="genero.html" class="category-card reveal-on-scroll">
       <div class="category-icon">
         <i data-lucide="layout-grid" style="width:24px;height:24px;"></i>
       </div>
@@ -140,7 +158,11 @@ async function loadCategories() {
     </a>
   `;
 
+  const section = document.getElementById('genres-section');
+  if (section) section.style.display = '';
+
   if (typeof lucide !== 'undefined') lucide.createIcons();
+  revealAll(grid);
 }
 
 // ── Helpers ───────────────────────────────────────────────
@@ -148,6 +170,12 @@ function formatDate(dateStr) {
   if (!dateStr) return '';
   const d = new Date(dateStr + 'T00:00:00');
   return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '');
+}
+
+// Elementos inseridos após o DOMContentLoaded não são observados pelo
+// IntersectionObserver do interactions.js — revela direto.
+function revealAll(root) {
+  root.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('is-visible'));
 }
 
 function initBannerCarousel() {

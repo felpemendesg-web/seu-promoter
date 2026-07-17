@@ -43,8 +43,8 @@
   <script>
     (async () => {
       // Redirect to setup if no members yet
-      const { count } = await db.from('panel_members').select('*', { count: 'exact', head: true });
-      if (count === 0) { window.location.href = 'setup.html'; return; }
+      const { data: exists } = await db.rpc('panel_members_exist');
+      if (!exists) { window.location.href = 'setup.html'; return; }
 
       // Redirect to dashboard if already logged in
       const { data: { session } } = await db.auth.getSession();

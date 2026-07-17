@@ -5,6 +5,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Eventos — Admin Seu Promoter</title>
   <link rel="stylesheet" href="assets/css/admin.css">
+  <style>
+    .form-section-label {
+      display: block;
+      margin: 1.75rem 0 0.75rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border, #e5e5e5);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim, #888);
+    }
+    .form-hint { font-size: 0.72rem; color: var(--text-dim, #888); margin-top: 0.3rem; }
+
+    .dyn-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .dyn-row { display: flex; gap: 0.5rem; align-items: center; }
+    .dyn-row .form-input { flex: 1; }
+    .icon-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 42px; height: 42px; flex: 0 0 42px;
+      border: 1px solid var(--border, #e5e5e5); border-radius: 8px;
+      background: var(--bg, #fff); cursor: pointer; color: inherit;
+    }
+    .icon-btn:hover { border-color: #f7d538; background: #fffbe6; }
+    .remove-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 42px; height: 42px; flex: 0 0 42px;
+      border: 1px solid transparent; border-radius: 8px;
+      background: transparent; cursor: pointer; color: #c0392b;
+    }
+    .remove-btn:hover { background: #fdecea; }
+    .add-row-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      margin-top: 0.6rem; padding: 0.5rem 0.9rem;
+      border: 1px dashed var(--border, #ccc); border-radius: 8px;
+      background: transparent; cursor: pointer;
+      font: 600 0.8rem inherit; color: inherit; font-family: inherit;
+    }
+    .add-row-btn:hover { border-color: #f7d538; background: #fffbe6; }
+
+    /* Icon picker overlay */
+    .icon-picker-overlay {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,0.45); align-items: center; justify-content: center;
+    }
+    .icon-picker-overlay.open { display: flex; }
+    .icon-picker {
+      background: #fff; border-radius: 14px; padding: 1.25rem;
+      max-width: 420px; width: calc(100% - 2rem); max-height: 70vh; overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .icon-picker h3 { font-size: 0.9rem; margin-bottom: 1rem; }
+    .icon-picker-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.5rem; }
+    .icon-picker-grid button {
+      display: flex; align-items: center; justify-content: center;
+      aspect-ratio: 1; border: 1px solid #eee; border-radius: 10px;
+      background: #fafafa; cursor: pointer; color: #333;
+    }
+    .icon-picker-grid button:hover { background: #f7d538; border-color: #f7d538; }
+  </style>
 </head>
 <body>
 <div class="admin-layout">
@@ -80,7 +140,7 @@
               <tr>
                 <th>Evento</th>
                 <th>Data</th>
-                <th>Categoria</th>
+                <th>Gênero</th>
                 <th>Destaque</th>
                 <th>Ativo</th>
                 <th>Ações</th>
@@ -98,7 +158,7 @@
 
 <!-- Modal -->
 <div class="modal-overlay" id="modal-overlay">
-  <div class="modal">
+  <div class="modal" style="max-width: 640px;">
     <div class="modal-header">
       <span class="modal-title" id="modal-title">Novo Evento</span>
       <button class="modal-close" onclick="closeModal()">
@@ -107,9 +167,16 @@
     </div>
     <div class="modal-body">
       <input type="hidden" id="event-id">
+
+      <span class="form-section-label" style="margin-top:0; padding-top:0; border-top:none;">Informações básicas</span>
+
       <div class="form-group">
         <label class="form-label">Título *</label>
         <input type="text" id="event-title" class="form-input" placeholder="Nome do evento" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Semi descrição</label>
+        <input type="text" id="event-subtitle" class="form-input" placeholder="Frase curta exibida abaixo do título">
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -118,23 +185,74 @@
         </div>
         <div class="form-group">
           <label class="form-label">Horário</label>
-          <input type="text" id="event-time" class="form-input" placeholder="Ex: 22h00">
+          <input type="text" id="event-time" class="form-input" placeholder="Ex: Abertura às 20h">
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Local</label>
-        <input type="text" id="event-location" class="form-input" placeholder="Nome do local e cidade">
+        <label class="form-label">Local (curto, exibido nos cards)</label>
+        <input type="text" id="event-location" class="form-input" placeholder="Ex: P12, Jurerê Internacional">
       </div>
-      <div class="form-group">
-        <label class="form-label">Categoria</label>
-        <select id="event-category" class="form-input">
-          <option value="">Sem categoria</option>
-        </select>
+      <div class="form-row">
+        <div class="form-group" style="flex:1;">
+          <label class="form-label">Gênero</label>
+          <div class="dyn-row">
+            <button type="button" class="icon-btn" id="genre-icon-btn" title="Escolher ícone" onclick="openIconPicker('genre')">
+              <i data-lucide="music-2" style="width:20px;height:20px;"></i>
+            </button>
+            <input type="text" id="event-genre" class="form-input" placeholder="Ex: Pagode, Eletrônico, Carnaval…">
+          </div>
+          <p class="form-hint">Texto livre. Usado na seção "Explorar por Gênero" e nos eventos relacionados.</p>
+          <input type="hidden" id="event-genre-icon" value="music-2">
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label">Link do Ingresso</label>
-        <input type="url" id="event-ticket-url" class="form-input" placeholder="https://…">
+        <input type="url" id="event-ticket-url" class="form-input" placeholder="https://… (botões Garantir/Comprar ingresso)">
       </div>
+
+      <span class="form-section-label">Conteúdo da página</span>
+
+      <div class="form-group">
+        <label class="form-label">Sobre o evento</label>
+        <textarea id="event-about" class="form-input" rows="6" placeholder="Descrição completa. Pode usar HTML (ex: <strong>, <br>, <p>)…" style="resize: vertical; min-height: 120px; font-family: inherit;"></textarea>
+        <p class="form-hint">Aceita HTML para formatação.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Atrações confirmadas</label>
+        <div class="dyn-list" id="attractions-list"></div>
+        <button type="button" class="add-row-btn" onclick="addAttraction()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Adicionar atração
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Informações importantes</label>
+        <div class="dyn-list" id="info-list"></div>
+        <button type="button" class="add-row-btn" onclick="addInfo()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Adicionar informação
+        </button>
+      </div>
+
+      <span class="form-section-label">Local do evento</span>
+
+      <div class="form-group">
+        <label class="form-label">Nome do local</label>
+        <input type="text" id="event-venue-name" class="form-input" placeholder="Ex: P12 Parador Internacional">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Endereço</label>
+        <input type="text" id="event-venue-address" class="form-input" placeholder="Rua, bairro, cidade - UF">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Link do Google Maps</label>
+        <input type="url" id="event-maps-url" class="form-input" placeholder="https://maps.google.com/…">
+      </div>
+
+      <span class="form-section-label">Imagens</span>
+
       <div class="form-group">
         <label class="form-label">Imagem do Evento</label>
         <div class="upload-zone" id="event-upload-zone">
@@ -148,6 +266,23 @@
         <img class="img-preview" id="event-img-preview" alt="Preview">
         <input type="hidden" id="event-image-url">
       </div>
+
+      <div class="form-group">
+        <label class="form-label">Imagem do Mapa do Evento</label>
+        <div class="upload-zone" id="map-upload-zone">
+          <input type="file" id="map-image-file" accept="image/*">
+          <div class="upload-icon">
+            <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+          </div>
+          <p class="upload-text">Clique ou arraste a imagem do mapa</p>
+          <p class="upload-hint">Mapa de setores/pistas do evento (opcional)</p>
+        </div>
+        <img class="img-preview" id="map-img-preview" alt="Preview do mapa">
+        <input type="hidden" id="map-image-url">
+      </div>
+
+      <span class="form-section-label">Exibição</span>
+
       <div style="display:flex; gap:1.5rem; flex-wrap:wrap;">
         <label style="display:flex; align-items:center; gap:0.625rem; cursor:pointer; font-size:0.875rem;">
           <div class="toggle">
@@ -155,7 +290,7 @@
             <div class="toggle-track"></div>
             <div class="toggle-thumb"></div>
           </div>
-          Em destaque
+          Em destaque (carrossel "Em Alta")
         </label>
         <label style="display:flex; align-items:center; gap:0.625rem; cursor:pointer; font-size:0.875rem;">
           <div class="toggle">
@@ -174,37 +309,128 @@
   </div>
 </div>
 
+<!-- Icon picker -->
+<div class="icon-picker-overlay" id="icon-picker-overlay">
+  <div class="icon-picker">
+    <h3>Escolha um ícone</h3>
+    <div class="icon-picker-grid" id="icon-picker-grid"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/supabase-client.js"></script>
 <script src="assets/js/auth.js"></script>
 <script>
-let categories = [];
 let editingId = null;
-let uploadedImageUrl = null;
+let attractions = [];   // [{name, icon}]
+let infos = [];         // [string]
+let iconTarget = null;  // 'genre' | attraction index
+
+const ICONS = [
+  'music', 'music-2', 'mic-2', 'disc-3', 'guitar', 'piano',
+  'drum', 'headphones', 'speaker', 'radio', 'zap', 'star',
+  'sparkles', 'flame', 'party-popper', 'users', 'heart', 'crown',
+  'sun', 'moon', 'waves', 'umbrella', 'rocket', 'gem',
+  'calendar', 'map-pin', 'ticket', 'glass-water', 'beer', 'trophy'
+];
 
 (async () => {
   const auth = await checkAuth();
   if (!auth) return;
   setUserInfo(auth.member);
   initMobileToggle();
-  await loadCategories();
+  buildIconPicker();
   await loadEvents();
 })();
 
-async function loadCategories() {
-  const { data } = await db.from('categories').select('id, name').eq('active', true).order('name');
-  categories = data || [];
-  const sel = document.getElementById('event-category');
-  sel.innerHTML = '<option value="">Sem categoria</option>';
-  categories.forEach(c => {
-    sel.innerHTML += `<option value="${c.id}">${c.name}</option>`;
-  });
+// ── Icon picker ────────────────────────────────────────────
+function buildIconPicker() {
+  const grid = document.getElementById('icon-picker-grid');
+  grid.innerHTML = ICONS.map(ic =>
+    `<button type="button" title="${ic}" onclick="pickIcon('${ic}')"><i data-lucide="${ic}" style="width:20px;height:20px;"></i></button>`
+  ).join('');
+  lucide.createIcons();
 }
 
+function openIconPicker(target) {
+  iconTarget = target;
+  document.getElementById('icon-picker-overlay').classList.add('open');
+}
+
+function pickIcon(icon) {
+  if (iconTarget === 'genre') {
+    document.getElementById('event-genre-icon').value = icon;
+    document.getElementById('genre-icon-btn').innerHTML = `<i data-lucide="${icon}" style="width:20px;height:20px;"></i>`;
+  } else if (typeof iconTarget === 'number') {
+    attractions[iconTarget].icon = icon;
+    renderAttractions();
+  }
+  document.getElementById('icon-picker-overlay').classList.remove('open');
+  lucide.createIcons();
+}
+
+document.getElementById('icon-picker-overlay').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+});
+
+// ── Atrações ───────────────────────────────────────────────
+function renderAttractions() {
+  const list = document.getElementById('attractions-list');
+  list.innerHTML = attractions.map((a, i) => `
+    <div class="dyn-row">
+      <button type="button" class="icon-btn" title="Escolher ícone" onclick="openIconPicker(${i})">
+        <i data-lucide="${a.icon || 'mic-2'}" style="width:20px;height:20px;"></i>
+      </button>
+      <input type="text" class="form-input" placeholder="Nome da atração" value="${(a.name || '').replace(/"/g, '&quot;')}"
+        oninput="attractions[${i}].name = this.value">
+      <button type="button" class="remove-btn" title="Remover" onclick="removeAttraction(${i})">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  `).join('');
+  lucide.createIcons();
+}
+
+function addAttraction() {
+  attractions.push({ name: '', icon: 'mic-2' });
+  renderAttractions();
+}
+
+function removeAttraction(i) {
+  attractions.splice(i, 1);
+  renderAttractions();
+}
+
+// ── Informações importantes ────────────────────────────────
+function renderInfos() {
+  const list = document.getElementById('info-list');
+  list.innerHTML = infos.map((txt, i) => `
+    <div class="dyn-row">
+      <input type="text" class="form-input" placeholder="Ex: Classificação: 18 anos" value="${(txt || '').replace(/"/g, '&quot;')}"
+        oninput="infos[${i}] = this.value">
+      <button type="button" class="remove-btn" title="Remover" onclick="removeInfo(${i})">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  `).join('');
+}
+
+function addInfo() {
+  infos.push('');
+  renderInfos();
+}
+
+function removeInfo(i) {
+  infos.splice(i, 1);
+  renderInfos();
+}
+
+// ── Listagem ───────────────────────────────────────────────
 async function loadEvents() {
   const { data: events } = await db
     .from('events')
-    .select('*, categories(name)')
+    .select('*')
     .order('created_at', { ascending: false });
 
   const tbody = document.getElementById('events-body');
@@ -232,7 +458,7 @@ async function loadEvents() {
         </div>
       </td>
       <td class="text-muted text-sm">${ev.date ? new Date(ev.date + 'T00:00:00').toLocaleDateString('pt-BR') : '—'}${ev.time ? ' · ' + ev.time : ''}</td>
-      <td class="text-muted text-sm">${ev.categories?.name ?? '—'}</td>
+      <td class="text-muted text-sm">${ev.genre || '—'}</td>
       <td>${ev.featured ? '<span class="badge badge-featured">⭐ Destaque</span>' : '<span class="text-dim text-sm">—</span>'}</td>
       <td>${ev.active ? '<span class="badge badge-active">Ativo</span>' : '<span class="badge badge-inactive">Inativo</span>'}</td>
       <td>
@@ -249,38 +475,55 @@ async function loadEvents() {
   `).join('');
 }
 
+// ── Modal ──────────────────────────────────────────────────
 function openModal(event = null) {
   editingId = event?.id || null;
-  uploadedImageUrl = null;
 
   document.getElementById('modal-title').textContent = event ? 'Editar Evento' : 'Novo Evento';
   document.getElementById('event-id').value = event?.id || '';
   document.getElementById('event-title').value = event?.title || '';
+  document.getElementById('event-subtitle').value = event?.subtitle || '';
   document.getElementById('event-date').value = event?.date || '';
   document.getElementById('event-time').value = event?.time || '';
   document.getElementById('event-location').value = event?.location || '';
   document.getElementById('event-ticket-url').value = event?.ticket_url || '';
-  document.getElementById('event-category').value = event?.category_id || '';
+  document.getElementById('event-about').value = event?.about_html || '';
+  document.getElementById('event-genre').value = event?.genre || '';
+  document.getElementById('event-venue-name').value = event?.venue_name || '';
+  document.getElementById('event-venue-address').value = event?.venue_address || '';
+  document.getElementById('event-maps-url').value = event?.maps_url || '';
   document.getElementById('event-featured').checked = event?.featured || false;
   document.getElementById('event-active').checked = event?.active !== false;
   document.getElementById('event-image-url').value = event?.image_url || '';
+  document.getElementById('map-image-url').value = event?.map_image_url || '';
+  document.getElementById('event-image-file').value = '';
+  document.getElementById('map-image-file').value = '';
 
-  const preview = document.getElementById('event-img-preview');
-  if (event?.image_url) {
-    preview.src = event.image_url;
-    preview.classList.add('show');
-  } else {
-    preview.src = '';
-    preview.classList.remove('show');
-  }
+  const genreIcon = event?.genre_icon || 'music-2';
+  document.getElementById('event-genre-icon').value = genreIcon;
+  document.getElementById('genre-icon-btn').innerHTML = `<i data-lucide="${genreIcon}" style="width:20px;height:20px;"></i>`;
+
+  attractions = Array.isArray(event?.attractions) ? structuredClone(event.attractions) : [];
+  infos = Array.isArray(event?.important_info) ? structuredClone(event.important_info) : [];
+  renderAttractions();
+  renderInfos();
+
+  setPreview('event-img-preview', event?.image_url);
+  setPreview('map-img-preview', event?.map_image_url);
 
   document.getElementById('modal-overlay').classList.add('open');
+  lucide.createIcons();
+}
+
+function setPreview(id, url) {
+  const el = document.getElementById(id);
+  if (url) { el.src = url; el.classList.add('show'); }
+  else { el.src = ''; el.classList.remove('show'); }
 }
 
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
   editingId = null;
-  uploadedImageUrl = null;
 }
 
 async function editEvent(id) {
@@ -296,21 +539,31 @@ async function saveEvent() {
   try {
     const imageFile = document.getElementById('event-image-file').files[0];
     let imageUrl = document.getElementById('event-image-url').value;
+    if (imageFile) imageUrl = await uploadImage(imageFile, 'events');
 
-    if (imageFile) {
-      imageUrl = await uploadImage(imageFile, 'events');
-    }
+    const mapFile = document.getElementById('map-image-file').files[0];
+    let mapImageUrl = document.getElementById('map-image-url').value;
+    if (mapFile) mapImageUrl = await uploadImage(mapFile, 'maps');
 
     const payload = {
-      title:       document.getElementById('event-title').value.trim(),
-      date:        document.getElementById('event-date').value || null,
-      time:        document.getElementById('event-time').value.trim() || null,
-      location:    document.getElementById('event-location').value.trim() || null,
-      ticket_url:  document.getElementById('event-ticket-url').value.trim() || null,
-      category_id: document.getElementById('event-category').value || null,
-      featured:    document.getElementById('event-featured').checked,
-      active:      document.getElementById('event-active').checked,
-      image_url:   imageUrl || null
+      title:          document.getElementById('event-title').value.trim(),
+      subtitle:       document.getElementById('event-subtitle').value.trim() || null,
+      date:           document.getElementById('event-date').value || null,
+      time:           document.getElementById('event-time').value.trim() || null,
+      location:       document.getElementById('event-location').value.trim() || null,
+      ticket_url:     document.getElementById('event-ticket-url').value.trim() || null,
+      about_html:     document.getElementById('event-about').value.trim() || null,
+      genre:          document.getElementById('event-genre').value.trim() || null,
+      genre_icon:     document.getElementById('event-genre-icon').value || 'music-2',
+      attractions:    attractions.filter(a => a.name && a.name.trim()),
+      important_info: infos.filter(t => t && t.trim()),
+      venue_name:     document.getElementById('event-venue-name').value.trim() || null,
+      venue_address:  document.getElementById('event-venue-address').value.trim() || null,
+      maps_url:       document.getElementById('event-maps-url').value.trim() || null,
+      featured:       document.getElementById('event-featured').checked,
+      active:         document.getElementById('event-active').checked,
+      image_url:      imageUrl || null,
+      map_image_url:  mapImageUrl || null
     };
 
     if (!payload.title) { showToast('O título é obrigatório.', 'error'); return; }
@@ -344,16 +597,20 @@ async function deleteEvent(id, title) {
   await loadEvents();
 }
 
-// Image preview on file select
+// Image previews on file select
 document.getElementById('event-image-file').addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = (ev) => {
-    const preview = document.getElementById('event-img-preview');
-    preview.src = ev.target.result;
-    preview.classList.add('show');
-  };
+  reader.onload = (ev) => setPreview('event-img-preview', ev.target.result);
+  reader.readAsDataURL(file);
+});
+
+document.getElementById('map-image-file').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => setPreview('map-img-preview', ev.target.result);
   reader.readAsDataURL(file);
 });
 

@@ -457,11 +457,11 @@
           src="assets/images/logo-seu-promoter.svg" alt="Seu Promoter Floripa" class="brand-logo"></a>
       <ul class="nav-links">
         <li><a href="index.html">Início</a></li>
-        <li><a href="categoria.html">P12 Jurerê</a></li>
-        <li><a href="categoria.html">Stage</a></li>
-        <li><a href="categoria.html">Carnaval</a></li>
-        <li><a href="categoria.html">Réveillon</a></li>
-        <li><a href="categoria.html">Outros Eventos</a></li>
+        <li><a href="genero.html?genero=P12 Jurerê">P12 Jurerê</a></li>
+        <li><a href="genero.html?genero=Stage">Stage</a></li>
+        <li><a href="genero.html?genero=Carnaval">Carnaval</a></li>
+        <li><a href="genero.html?genero=Réveillon">Réveillon</a></li>
+        <li><a href="genero.html">Outros Eventos</a></li>
       </ul>
       <a href="https://chat.whatsapp.com/B6zgGEb4gGm3YR0DasbXNB" target="_blank" rel="noopener" class="btn"
         style="background: var(--color-black); color: var(--color-white); font-size: 0.875rem; gap: 0.4rem; align-items: center;">
@@ -476,43 +476,10 @@
   </header>
 
   <!-- MAIN BANNER CAROUSEL -->
-  <section class="main-banner-section reveal-on-scroll">
+  <section class="main-banner-section reveal-on-scroll" id="banner-section" style="display:none;">
     <div class="container">
       <div class="main-banner-carousel">
-        <div class="main-banner-track">
-          <div class="main-banner-slide">
-            <a href="evento.html">
-              <picture>
-                <source media="(max-width: 768px)" srcset="assets/images/banner-mobile.jpeg">
-                <img src="assets/images/image.png" alt="Folianópolis 2026 - Compre seu ingresso">
-              </picture>
-            </a>
-          </div>
-          <div class="main-banner-slide">
-            <a href="categoria.html">
-              <picture>
-                <source media="(max-width: 768px)" srcset="assets/images/banner-mobile.jpeg">
-                <img src="assets/images/image.png" alt="Melhores Eventos de Pagode em Floripa">
-              </picture>
-            </a>
-          </div>
-          <div class="main-banner-slide">
-            <a href="evento.html">
-              <picture>
-                <source media="(max-width: 768px)" srcset="assets/images/banner-mobile.jpeg">
-                <img src="assets/images/image.png" alt="Réveillon Costão do Santinho 2027">
-              </picture>
-            </a>
-          </div>
-          <div class="main-banner-slide">
-            <a href="categoria.html">
-              <picture>
-                <source media="(max-width: 768px)" srcset="assets/images/banner-mobile.jpeg">
-                <img src="assets/images/image.png" alt="Festas Eletrônicas em Floripa">
-              </picture>
-            </a>
-          </div>
-        </div>
+        <div class="main-banner-track"></div>
 
         <!-- Arrows -->
         <button class="main-banner-arrow prev" aria-label="Anterior">
@@ -523,102 +490,23 @@
         </button>
 
         <!-- Dots -->
-        <div class="main-banner-dots">
-          <span class="banner-dot active" data-slide="0"></span>
-          <span class="banner-dot" data-slide="1"></span>
-          <span class="banner-dot" data-slide="2"></span>
-          <span class="banner-dot" data-slide="3"></span>
-        </div>
+        <div class="main-banner-dots"></div>
       </div>
     </div>
   </section>
 
   <!-- EM DESTAQUE -->
-  <section class="section">
+  <section class="section" id="featured-section" style="display:none;">
     <div class="container">
       <div class="section-header reveal-on-scroll">
         <h2 class="section-title">Em Alta 🔥</h2>
-        <a href="categoria.html" class="see-all">
+        <a href="genero.html" class="see-all">
           Ver todos
           <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
         </a>
       </div>
       <div class="carousel-container reveal-on-scroll">
-        <div class="featured-grid">
-
-          <article class="event-card-featured hover-glow hover-lift">
-          <span class="badge-destaque">⭐ Destaque</span>
-          <div style="overflow: hidden;">
-            <img src="assets/images/show.jpg" alt="Folianópolis 2026 — Carnaval em Florianópolis" class="feat-img">
-          </div>
-          <div class="event-card-body">
-            <span class="event-date">05 de Agosto · 14h00</span>
-            <h3 class="event-title">Folianópolis 2026</h3>
-            <p class="event-location">
-              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
-              Passarela Nego Quirido, Centro — Florianópolis
-            </p>
-            <div class="event-footer">
-              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="event-card-featured hover-glow hover-lift">
-          <span class="badge-destaque">🎆 Destaque</span>
-          <div style="overflow: hidden;">
-            <img src="assets/images/show.jpg" alt="Réveillon Floripa 2027 — Costão do Santinho" class="feat-img">
-          </div>
-          <div class="event-card-body">
-            <span class="event-date">31 de Dezembro · 22h00</span>
-            <h3 class="event-title">Réveillon Floripa 2027</h3>
-            <p class="event-location">
-              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
-              Costão do Santinho Resort — Florianópolis
-            </p>
-            <div class="event-footer">
-              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="event-card-featured hover-glow hover-lift">
-          <span class="badge-destaque">🔥 Destaque</span>
-          <div style="overflow: hidden;">
-            <img src="assets/images/show.jpg" alt="Pagodão Premium — Jurerê Beach Village" class="feat-img">
-          </div>
-          <div class="event-card-body">
-            <span class="event-date">16 Ago · 20h00</span>
-            <h3 class="event-title">Pagodão Premium</h3>
-            <p class="event-location">
-              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
-              Jurerê Beach Village
-            </p>
-            <div class="event-footer">
-              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="event-card-featured hover-glow hover-lift">
-          <span class="badge-destaque">🌟 Destaque</span>
-          <div style="overflow: hidden;">
-            <img src="assets/images/show.jpg" alt="Pagode do Forte — Ingleses" class="feat-img">
-          </div>
-          <div class="event-card-body">
-            <span class="event-date">02 Ago · 21h00</span>
-            <h3 class="event-title">Pagode do Forte</h3>
-            <p class="event-location">
-              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
-              Praia dos Ingleses
-            </p>
-            <div class="event-footer">
-              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
-            </div>
-          </div>
-        </article>
-
-        </div>
+        <div class="featured-grid"></div>
         <button class="carousel-arrow prev" aria-label="Anterior">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
         </button>
@@ -639,189 +527,37 @@
         shows da cidade</h1>
       <p class="hero-subtitle">Descubra, acompanhe e garanta seu ingresso com desconto exclusivo do Seu Promoter
         Floripa.</p>
-      <div class="search-bar">
-        <input type="text" class="search-input" placeholder="Buscar evento, artista ou local...">
-        <button class="search-btn">
+      <form class="search-bar" action="busca.html" method="get">
+        <input type="text" class="search-input" name="q" placeholder="Buscar evento, artista ou local..." required>
+        <button class="search-btn" type="submit">
           <i data-lucide="search" style="width: 16px; height: 16px;"></i>
           Buscar
         </button>
-      </div>
+      </form>
     </div>
   </section>
 
   <!-- PRÓXIMOS EVENTOS -->
-  <section class="section">
+  <section class="section" id="upcoming-section" style="display:none;">
     <div class="container">
       <div class="section-header reveal-on-scroll">
         <h2 class="section-title">Próximos Eventos</h2>
-        <a href="categoria.html" class="see-all">
+        <a href="genero.html" class="see-all">
           Ver todos
           <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
         </a>
       </div>
-      <div class="grid-3" id="events-grid">
-
-        <article class="event-card event-card-feed reveal-on-scroll delay-100 hover-glow">
-          <div style="overflow: hidden;">
-            <img src="assets/images/feed-1.png" alt="Pagodinho do Morro — Pagode em Jurerê Internacional"
-              class="event-card-img">
-          </div>
-          <div class="event-card-body">
-            <span class="event-date">19 Jul · 20h00</span>
-            <h3 class="event-title">Pagodinho do Morro</h3>
-            <p class="event-location">
-              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
-              P12, Jurerê Internacional
-            </p>
-            <div class="event-footer">
-              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="event-card event-card-feed reveal-on-scroll delay-200 hover-glow">
-          <div style="overflow: hidden;">
-            <img src="assets/images/feed-2.png" alt="Rave da Lagoa — Festa eletrônica em Florianópolis"
-              class="event-card-img">
-          </div>
-          <div class="event-card-body">
-            <span class="event-date">26 Jul · 23h00</span>
-            <h3 class="event-title">Rave da Lagoa</h3>
-            <p class="event-location">
-              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
-              Lagoa da Conceição
-            </p>
-            <div class="event-footer">
-              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="event-card reveal-on-scroll delay-300 hover-glow">
-          <div style="overflow: hidden;">
-            <img src="assets/images/show.jpg" alt="Folianópolis 2026 — Carnaval em Florianópolis"
-              class="event-card-img">
-          </div>
-          <div class="event-card-body">
-            <span class="event-date">05 Ago · 14h00</span>
-            <h3 class="event-title">Folianópolis 2026</h3>
-            <p class="event-location">
-              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
-              Passarela Nego Quirido
-            </p>
-            <div class="event-footer">
-              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="event-card reveal-on-scroll delay-100 hover-glow">
-          <div style="overflow: hidden;">
-            <img src="assets/images/show.jpg" alt="Ultra Floripa — Festival eletrônico" class="event-card-img">
-          </div>
-          <div class="event-card-body">
-            <span class="event-date">02 Ago · 22h00</span>
-            <h3 class="event-title">Ultra Floripa</h3>
-            <p class="event-location">
-              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
-              Arena Mastercredi
-            </p>
-            <div class="event-footer">
-              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="event-card reveal-on-scroll delay-200 hover-glow">
-          <div style="overflow: hidden;">
-            <img src="assets/images/show.jpg" alt="Samba da Ilha — Pagode no Centro de Florianópolis"
-              class="event-card-img">
-          </div>
-          <div class="event-card-body">
-            <span class="event-date">12 Jul · 20h00</span>
-            <h3 class="event-title">Samba da Ilha</h3>
-            <p class="event-location">
-              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
-              Samba Rock Bar, Centro
-            </p>
-            <div class="event-footer">
-              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="event-card reveal-on-scroll delay-300 hover-glow">
-          <div style="overflow: hidden;">
-            <img src="assets/images/show.jpg" alt="Réveillon Floripa 2027 — Costão do Santinho" class="event-card-img">
-          </div>
-          <div class="event-card-body">
-            <span class="event-date">31 Dez · 22h00</span>
-            <h3 class="event-title">Réveillon Floripa 2027</h3>
-            <p class="event-location">
-              <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
-              Costão do Santinho
-            </p>
-            <div class="event-footer">
-              <a href="evento.html" class="btn btn-primary">Ver Evento</a>
-            </div>
-          </div>
-        </article>
-
-      </div>
+      <div class="grid-3" id="events-grid"></div>
     </div>
   </section>
 
-  <!-- EXPLORAR POR CATEGORIA -->
-  <section class="section" style="background-color: var(--color-white);">
+  <!-- EXPLORAR POR GÊNERO -->
+  <section class="section" style="background-color: var(--color-white); display:none;" id="genres-section">
     <div class="container">
       <div class="section-header reveal-on-scroll">
-        <h2 class="section-title">Explorar por Categoria</h2>
+        <h2 class="section-title">Explorar por Gênero</h2>
       </div>
-      <div class="categories-grid" id="categories-grid">
-
-        <a href="categoria.html" class="category-card reveal-on-scroll delay-100">
-          <div class="category-icon">
-            <i data-lucide="music-2" style="width: 24px; height: 24px;"></i>
-          </div>
-          <span class="category-name">Pagode</span>
-        </a>
-
-        <a href="categoria.html" class="category-card reveal-on-scroll delay-200">
-          <div class="category-icon">
-            <i data-lucide="zap" style="width: 24px; height: 24px;"></i>
-          </div>
-          <span class="category-name">Eletrônico</span>
-        </a>
-
-        <a href="categoria.html" class="category-card reveal-on-scroll delay-300">
-          <div class="category-icon">
-            <i data-lucide="star" style="width: 24px; height: 24px;"></i>
-          </div>
-          <span class="category-name">Carnaval</span>
-        </a>
-
-        <a href="categoria.html" class="category-card reveal-on-scroll delay-400">
-          <div class="category-icon">
-            <i data-lucide="sparkles" style="width: 24px; height: 24px;"></i>
-          </div>
-          <span class="category-name">Réveillon</span>
-        </a>
-
-        <a href="categoria.html" class="category-card reveal-on-scroll delay-500">
-          <div class="category-icon">
-            <i data-lucide="mic-2" style="width: 24px; height: 24px;"></i>
-          </div>
-          <span class="category-name">Shows</span>
-        </a>
-
-        <a href="categoria.html" class="category-card reveal-on-scroll">
-          <div class="category-icon">
-            <i data-lucide="layout-grid" style="width: 24px; height: 24px;"></i>
-          </div>
-          <span class="category-name">Ver Todos</span>
-        </a>
-
-      </div>
+      <div class="categories-grid" id="genres-grid"></div>
     </div>
   </section>
 
@@ -904,6 +640,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/js/supabase-client.js"></script>
+  <script src="assets/js/site-nav.js"></script>
   <script src="assets/js/interactions.js"></script>
   <script src="assets/js/dynamic-data.js"></script>
 </body>

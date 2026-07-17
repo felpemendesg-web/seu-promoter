@@ -2,3 +2,9 @@
 .env*
 .DS_Store
 node_modules/
+
+# Config local do Claude Code (permissões da máquina, não versionar)
+.claude/settings.local.json
+
+# Config de MCP local (contém refs de projeto/servidor)
+.mcp.json

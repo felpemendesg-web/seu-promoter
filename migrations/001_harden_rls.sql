@@ -1,65 +1,10 @@
--- ═══════════════════════════════════════════════════════
---  Seu Promoter — Setup do Banco de Dados Supabase
---  Execute este SQL no SQL Editor do seu projeto Supabase
--- ═══════════════════════════════════════════════════════
+-- ═══════════════════════════════════════════════════════════════
+--  Seu Promoter — Hardening de RLS para produção
+--  Idempotente. Mexe APENAS em policies e funções — nenhuma tabela.
+--  Ordem: helpers → RPCs → troca de policies.
+-- ═══════════════════════════════════════════════════════════════
 
--- 1. Categorias
-create table if not exists public.categories (
-  id         uuid primary key default gen_random_uuid(),
-  name       text not null,
-  slug       text unique not null,
-  icon       text default 'calendar',
-  active     boolean default true,
-  created_at timestamptz default now()
-);
-
--- 2. Eventos
-create table if not exists public.events (
-  id          uuid primary key default gen_random_uuid(),
-  title       text not null,
-  date        date,
-  time        text,
-  location    text,
-  image_url   text,
-  ticket_url  text,
-  category_id uuid references public.categories(id) on delete set null,
-  featured    boolean default false,
-  active      boolean default true,
-  created_at  timestamptz default now()
-);
-
--- 3. Banners
-create table if not exists public.banners (
-  id                 uuid primary key default gen_random_uuid(),
-  title              text,
-  desktop_image_url  text not null,
-  mobile_image_url   text not null,
-  link               text,
-  order_index        int default 0,
-  active             boolean default true,
-  created_at         timestamptz default now()
-);
-
--- 4. Membros do Painel
-create table if not exists public.panel_members (
-  id         uuid primary key references auth.users(id) on delete cascade,
-  name       text not null,
-  email      text not null,
-  role       text default 'editor' check (role in ('admin', 'editor')),
-  created_at timestamptz default now()
-);
-
--- 5. Convites
-create table if not exists public.invites (
-  id         uuid primary key default gen_random_uuid(),
-  role       text default 'editor',
-  token      uuid default gen_random_uuid() unique not null,
-  used       boolean default false,
-  created_by uuid references public.panel_members(id) on delete set null,
-  created_at timestamptz default now()
-);
-
--- ── Funções auxiliares (SECURITY DEFINER evita recursão de RLS) ──
+-- ── 1. Funções auxiliares (SECURITY DEFINER evita recursão de RLS) ──
 create or replace function public.is_panel_member()
 returns boolean language sql stable security definer
 set search_path = public, pg_temp
@@ -70,19 +15,14 @@ returns boolean language sql stable security definer
 set search_path = public, pg_temp
 as $$ select exists(select 1 from public.panel_members where id = auth.uid() and role = 'admin'); $$;
 
--- Checa se já existe algum admin, sem expor dados (só boolean).
-create or replace function public.panel_members_exist()
-returns boolean language sql stable security definer
-set search_path = public, pg_temp
-as $$ select exists(select 1 from public.panel_members); $$;
-
 revoke all on function public.is_panel_member() from public;
 revoke all on function public.is_admin() from public;
-grant execute on function public.is_panel_member()   to anon, authenticated;
-grant execute on function public.is_admin()          to anon, authenticated;
-grant execute on function public.panel_members_exist() to anon, authenticated;
+grant execute on function public.is_panel_member() to anon, authenticated;
+grant execute on function public.is_admin() to anon, authenticated;
 
--- ── RPCs de convite / bootstrap (o cliente nunca insere em panel_members) ──
+-- ── 2. RPCs (SECURITY DEFINER) — o cliente nunca insere em panel_members direto ──
+
+-- Valida um token de convite sem expor a tabela (retorna só boolean).
 create or replace function public.validate_invite(p_token uuid)
 returns boolean language sql stable security definer
 set search_path = public, pg_temp
@@ -91,6 +31,7 @@ as $$ select exists(select 1 from public.invites where token = p_token and used 
 revoke all on function public.validate_invite(uuid) from public;
 grant execute on function public.validate_invite(uuid) to anon, authenticated;
 
+-- Redime um convite: cria o membro do painel para o usuário logado e marca o convite como usado.
 create or replace function public.redeem_invite(p_token uuid, p_name text)
 returns void language plpgsql security definer
 set search_path = public, pg_temp
@@ -98,11 +39,16 @@ as $$
 declare v_invite public.invites%rowtype;
 begin
   if auth.uid() is null then raise exception 'not_authenticated'; end if;
-  select * into v_invite from public.invites where token = p_token and used = false for update;
+
+  select * into v_invite from public.invites
+    where token = p_token and used = false
+    for update;
   if not found then raise exception 'invalid_or_used_invite'; end if;
+
   if exists (select 1 from public.panel_members where id = auth.uid()) then
     raise exception 'already_member';
   end if;
+
   insert into public.panel_members (id, name, email, role)
   values (
     auth.uid(),
@@ -110,20 +56,26 @@ begin
     coalesce((select email from auth.users where id = auth.uid()), ''),
     case when v_invite.role in ('admin','editor') then v_invite.role else 'editor' end
   );
+
   update public.invites set used = true where id = v_invite.id;
 end; $$;
 
 revoke all on function public.redeem_invite(uuid, text) from public;
 grant execute on function public.redeem_invite(uuid, text) to authenticated;
 
+-- Cria o primeiro admin, apenas se nenhum membro existir ainda (bootstrap).
 create or replace function public.claim_first_admin(p_name text)
 returns void language plpgsql security definer
 set search_path = public, pg_temp
 as $$
 begin
   if auth.uid() is null then raise exception 'not_authenticated'; end if;
+
   lock table public.panel_members in exclusive mode;
-  if exists (select 1 from public.panel_members) then raise exception 'admin_already_exists'; end if;
+  if exists (select 1 from public.panel_members) then
+    raise exception 'admin_already_exists';
+  end if;
+
   insert into public.panel_members (id, name, email, role)
   values (
     auth.uid(),
@@ -136,7 +88,23 @@ end; $$;
 revoke all on function public.claim_first_admin(text) from public;
 grant execute on function public.claim_first_admin(text) to authenticated;
 
--- ── Row Level Security ───────────────────────────────────
+-- ── 3. Troca de policies ──
+-- Dropa TODAS as policies atuais de cada tabela (sobrevive a drift de nomes) e recria.
+
+do $$
+declare r record;
+begin
+  for r in
+    select schemaname, tablename, policyname from pg_policies
+    where (schemaname = 'public' and tablename in ('categories','events','banners','panel_members','invites'))
+       or (schemaname = 'storage' and tablename = 'objects'
+           and policyname in ('img_public_read','img_auth_insert','img_auth_update','img_auth_delete'))
+  loop
+    execute format('drop policy if exists %I on %I.%I', r.policyname, r.schemaname, r.tablename);
+  end loop;
+end $$;
+
+-- Garante RLS ligado (idempotente)
 alter table public.categories   enable row level security;
 alter table public.events        enable row level security;
 alter table public.banners       enable row level security;
@@ -149,13 +117,13 @@ create policy "cat_insert" on public.categories for insert with check (public.is
 create policy "cat_update" on public.categories for update using (public.is_panel_member()) with check (public.is_panel_member());
 create policy "cat_delete" on public.categories for delete using (public.is_panel_member());
 
--- Events: leitura pública, escrita só para membros do painel
+-- Events
 create policy "ev_read"   on public.events for select using (true);
 create policy "ev_insert" on public.events for insert with check (public.is_panel_member());
 create policy "ev_update" on public.events for update using (public.is_panel_member()) with check (public.is_panel_member());
 create policy "ev_delete" on public.events for delete using (public.is_panel_member());
 
--- Banners: leitura pública, escrita só para membros do painel
+-- Banners
 create policy "ban_read"   on public.banners for select using (true);
 create policy "ban_insert" on public.banners for insert with check (public.is_panel_member());
 create policy "ban_update" on public.banners for update using (public.is_panel_member()) with check (public.is_panel_member());
@@ -171,27 +139,12 @@ create policy "inv_insert" on public.invites for insert with check (public.is_ad
 create policy "inv_read"   on public.invites for select using (public.is_admin());
 create policy "inv_delete" on public.invites for delete using (public.is_admin());
 
--- ── Storage Bucket ───────────────────────────────────────
-insert into storage.buckets (id, name, public)
-values ('images', 'images', true)
-on conflict (id) do nothing;
-
--- Bucket é público: URLs são servidas direto, sem policy de SELECT.
--- (Não criamos SELECT policy para não permitir listagem do bucket via API.)
-
+-- Storage (bucket 'images'): leitura pública, escrita só para membros do painel
+create policy "img_public_read" on storage.objects
+  for select using (bucket_id = 'images');
 create policy "img_auth_insert" on storage.objects
   for insert with check (bucket_id = 'images' and public.is_panel_member());
-
 create policy "img_auth_update" on storage.objects
   for update using (bucket_id = 'images' and public.is_panel_member()) with check (bucket_id = 'images' and public.is_panel_member());
-
 create policy "img_auth_delete" on storage.objects
   for delete using (bucket_id = 'images' and public.is_panel_member());
-
--- ════════════════════════════════════════════════════════
---  Pronto! Após executar este SQL:
---  1. Copie a URL e a anon key do projeto Supabase
---  2. Cole em: admin/assets/js/supabase-client.js
---  3. E em:    assets/js/supabase-client.js
---  4. Acesse /admin e faça o primeiro cadastro
--- ════════════════════════════════════════════════════════

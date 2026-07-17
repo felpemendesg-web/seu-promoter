@@ -63,21 +63,15 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const token  = params.get('token');
-    let inviteData = null;
 
     (async () => {
       if (!token) { showState('invalid'); return; }
 
-      const { data: invite, error } = await db
-        .from('invites')
-        .select('*')
-        .eq('token', token)
-        .eq('used', false)
-        .single();
+      try {
+        const { data: valid, error } = await db.rpc('validate_invite', { p_token: token });
+        if (error || !valid) { showState('invalid'); return; }
+      } catch { showState('invalid'); return; }
 
-      if (error || !invite) { showState('invalid'); return; }
-
-      inviteData = invite;
       showState('form');
     })();
 
@@ -107,7 +101,7 @@
       btn.disabled = true;
       errEl.style.display = 'none';
 
-      const { data, error } = await db.auth.signUp({ email, password });
+      const { error } = await db.auth.signUp({ email, password });
 
       if (error) {
         errEl.textContent = error.message;
@@ -117,16 +111,16 @@
         return;
       }
 
-      // Insert into panel_members
-      await db.from('panel_members').insert({
-        id:    data.user.id,
-        name,
-        email,
-        role:  inviteData.role || 'editor'
-      });
+      // Redime o convite e cria o membro do painel (RPC valida token no servidor)
+      const { error: rpcError } = await db.rpc('redeem_invite', { p_token: token, p_name: name });
 
-      // Mark invite as used
-      await db.from('invites').update({ used: true }).eq('token', token);
+      if (rpcError) {
+        errEl.textContent = 'Erro ao aceitar convite: ' + rpcError.message;
+        errEl.style.display = 'block';
+        btn.textContent = 'Criar Conta e Entrar';
+        btn.disabled = false;
+        return;
+      }
 
       showState('success');
 

@@ -5,6 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Categorias — Admin Seu Promoter</title>
   <link rel="stylesheet" href="assets/css/admin.css">
+  <style>
+    .dyn-row { display: flex; gap: 0.5rem; align-items: center; }
+    .dyn-row .form-input { flex: 1; }
+    .icon-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 42px; height: 42px; flex: 0 0 42px;
+      border: 1px solid var(--border, #e5e5e5); border-radius: 8px;
+      background: var(--bg, #fff); cursor: pointer; color: inherit;
+    }
+    .icon-btn:hover { border-color: #f7d538; background: #fffbe6; }
+
+    .icon-picker-overlay {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,0.45); align-items: center; justify-content: center;
+    }
+    .icon-picker-overlay.open { display: flex; }
+    .icon-picker {
+      background: #fff; border-radius: 14px; padding: 1.25rem;
+      max-width: 420px; width: calc(100% - 2rem); max-height: 70vh; overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .icon-picker h3 { font-size: 0.9rem; margin-bottom: 1rem; }
+    .icon-picker-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.5rem; }
+    .icon-picker-grid button {
+      display: flex; align-items: center; justify-content: center;
+      aspect-ratio: 1; border: 1px solid #eee; border-radius: 10px;
+      background: #fafafa; cursor: pointer; color: #333;
+    }
+    .icon-picker-grid button:hover { background: #f7d538; border-color: #f7d538; }
+
+    .table-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: 8px;
+      background: rgba(247, 213, 56, 0.15); color: inherit;
+    }
+  </style>
 </head>
 <body>
 <div class="admin-layout">
@@ -79,21 +115,22 @@
             <thead>
               <tr>
                 <th>Nome</th>
-                <th>Ícone (Lucide)</th>
-                <th>Slug</th>
+                <th>Ícone</th>
+                <th>Explorar por Gênero</th>
+                <th>Menu do site</th>
                 <th>Ativo</th>
                 <th>Ações</th>
               </tr>
             </thead>
             <tbody id="categories-body">
-              <tr><td colspan="5"><div class="loading"><div class="spinner"></div>Carregando…</div></td></tr>
+              <tr><td colspan="6"><div class="loading"><div class="spinner"></div>Carregando…</div></td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
       <div class="alert alert-info" style="margin-top:1.5rem; font-size:0.8rem;">
-        <strong>Ícones disponíveis:</strong> Use nomes do <a href="https://lucide.dev/icons" target="_blank" style="color:var(--info); text-decoration:underline;">Lucide Icons</a> — ex: <code>music-2</code>, <code>zap</code>, <code>star</code>, <code>sparkles</code>, <code>mic-2</code>, <code>layout-grid</code>
+        As categorias marcadas com <strong>Explorar por Gênero</strong> aparecem no carrossel da home. As marcadas com <strong>Menu do site</strong> viram links na barra de navegação. O filtro dos eventos usa o <strong>nome</strong> da categoria — cadastre o gênero do evento com o mesmo nome.
       </div>
     </div>
   </main>
@@ -112,26 +149,46 @@
       <input type="hidden" id="cat-id">
       <div class="form-group">
         <label class="form-label">Nome *</label>
-        <input type="text" id="cat-name" class="form-input" placeholder="Ex: Pagode" required oninput="autoSlug()">
+        <div class="dyn-row">
+          <button type="button" class="icon-btn" id="cat-icon-btn" title="Escolher ícone" onclick="openIconPicker()">
+            <i data-lucide="music-2" style="width:20px;height:20px;"></i>
+          </button>
+          <input type="text" id="cat-name" class="form-input" placeholder="Ex: Pagode" required oninput="autoSlug()">
+        </div>
+        <p class="form-hint">Clique no quadrado para escolher o ícone.</p>
+        <input type="hidden" id="cat-icon" value="music-2">
       </div>
       <div class="form-group">
         <label class="form-label">Slug (URL)</label>
         <input type="text" id="cat-slug" class="form-input" placeholder="Ex: pagode">
         <p class="form-hint">Gerado automaticamente. Use apenas letras, números e hífens.</p>
       </div>
-      <div class="form-group">
-        <label class="form-label">Ícone Lucide</label>
-        <input type="text" id="cat-icon" class="form-input" placeholder="Ex: music-2">
-        <p class="form-hint">Veja em lucide.dev/icons</p>
+      <div style="display:flex; flex-direction:column; gap:0.875rem;">
+        <label style="display:flex; align-items:center; gap:0.625rem; cursor:pointer; font-size:0.875rem;">
+          <div class="toggle">
+            <input type="checkbox" id="cat-explore" checked>
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </div>
+          Exibir no carrossel "Explorar por Gênero"
+        </label>
+        <label style="display:flex; align-items:center; gap:0.625rem; cursor:pointer; font-size:0.875rem;">
+          <div class="toggle">
+            <input type="checkbox" id="cat-menu">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </div>
+          Exibir no menu do site
+        </label>
+        <label style="display:flex; align-items:center; gap:0.625rem; cursor:pointer; font-size:0.875rem;">
+          <div class="toggle">
+            <input type="checkbox" id="cat-active" checked>
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </div>
+          Ativo (visível no site)
+        </label>
       </div>
-      <label style="display:flex; align-items:center; gap:0.625rem; cursor:pointer; font-size:0.875rem;">
-        <div class="toggle">
-          <input type="checkbox" id="cat-active" checked>
-          <div class="toggle-track"></div>
-          <div class="toggle-thumb"></div>
-        </div>
-        Ativo (visível no site)
-      </label>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
@@ -140,26 +197,69 @@
   </div>
 </div>
 
+<!-- Icon picker -->
+<div class="icon-picker-overlay" id="icon-picker-overlay">
+  <div class="icon-picker">
+    <h3>Escolha um ícone</h3>
+    <div class="icon-picker-grid" id="icon-picker-grid"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/supabase-client.js"></script>
 <script src="assets/js/auth.js"></script>
 <script>
 let editingId = null;
 
+const ICONS = [
+  'music', 'music-2', 'mic-2', 'disc-3', 'guitar', 'piano',
+  'drum', 'headphones', 'speaker', 'radio', 'zap', 'star',
+  'sparkles', 'flame', 'party-popper', 'users', 'heart', 'crown',
+  'sun', 'moon', 'waves', 'umbrella', 'rocket', 'gem',
+  'calendar', 'map-pin', 'ticket', 'glass-water', 'beer', 'trophy'
+];
+
 (async () => {
   const auth = await checkAuth();
   if (!auth) return;
   setUserInfo(auth.member);
   initMobileToggle();
+  buildIconPicker();
   await loadCategories();
 })();
 
+// ── Icon picker ────────────────────────────────────────────
+function buildIconPicker() {
+  const grid = document.getElementById('icon-picker-grid');
+  grid.innerHTML = ICONS.map(ic =>
+    `<button type="button" title="${ic}" onclick="pickIcon('${ic}')"><i data-lucide="${ic}" style="width:20px;height:20px;"></i></button>`
+  ).join('');
+  lucide.createIcons();
+}
+
+function openIconPicker() {
+  document.getElementById('icon-picker-overlay').classList.add('open');
+}
+
+function pickIcon(icon) {
+  document.getElementById('cat-icon').value = icon;
+  document.getElementById('cat-icon-btn').innerHTML = `<i data-lucide="${icon}" style="width:20px;height:20px;"></i>`;
+  document.getElementById('icon-picker-overlay').classList.remove('open');
+  lucide.createIcons();
+}
+
+document.getElementById('icon-picker-overlay').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+});
+
+// ── Listagem ───────────────────────────────────────────────
 async function loadCategories() {
   const { data: cats } = await db.from('categories').select('*').order('name');
   const tbody = document.getElementById('categories-body');
 
   if (!cats || cats.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5">
+    tbody.innerHTML = `<tr><td colspan="6">
       <div class="empty-state">
         <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
         <h3>Nenhuma categoria ainda</h3>
@@ -172,8 +272,9 @@ async function loadCategories() {
   tbody.innerHTML = cats.map(c => `
     <tr>
       <td class="fw-600">${c.name}</td>
-      <td class="text-muted text-sm"><code style="background:#111;padding:2px 6px;border-radius:4px;">${c.icon || '—'}</code></td>
-      <td class="text-muted text-sm">${c.slug}</td>
+      <td><span class="table-icon"><i data-lucide="${c.icon || 'calendar'}" style="width:16px;height:16px;"></i></span></td>
+      <td>${c.show_in_explore ? '<span class="badge badge-active">Sim</span>' : '<span class="text-dim text-sm">—</span>'}</td>
+      <td>${c.show_in_menu ? '<span class="badge badge-featured">No menu</span>' : '<span class="text-dim text-sm">—</span>'}</td>
       <td>${c.active ? '<span class="badge badge-active">Ativo</span>' : '<span class="badge badge-inactive">Inativo</span>'}</td>
       <td>
         <div class="actions-cell">
@@ -187,6 +288,8 @@ async function loadCategories() {
       </td>
     </tr>
   `).join('');
+
+  lucide.createIcons();
 }
 
 function autoSlug() {
@@ -204,9 +307,16 @@ function openModal(cat = null) {
   document.getElementById('cat-id').value = cat?.id || '';
   document.getElementById('cat-name').value = cat?.name || '';
   document.getElementById('cat-slug').value = cat?.slug || '';
-  document.getElementById('cat-icon').value = cat?.icon || '';
+  document.getElementById('cat-explore').checked = cat ? cat.show_in_explore !== false : true;
+  document.getElementById('cat-menu').checked = cat?.show_in_menu || false;
   document.getElementById('cat-active').checked = cat?.active !== false;
+
+  const icon = cat?.icon || 'music-2';
+  document.getElementById('cat-icon').value = icon;
+  document.getElementById('cat-icon-btn').innerHTML = `<i data-lucide="${icon}" style="width:20px;height:20px;"></i>`;
+
   document.getElementById('modal-overlay').classList.add('open');
+  lucide.createIcons();
 }
 
 function closeModal() {
@@ -226,10 +336,12 @@ async function saveCategory() {
 
   try {
     const payload = {
-      name:   document.getElementById('cat-name').value.trim(),
-      slug:   document.getElementById('cat-slug').value.trim(),
-      icon:   document.getElementById('cat-icon').value.trim() || null,
-      active: document.getElementById('cat-active').checked
+      name:            document.getElementById('cat-name').value.trim(),
+      slug:            document.getElementById('cat-slug').value.trim(),
+      icon:            document.getElementById('cat-icon').value || 'music-2',
+      show_in_explore: document.getElementById('cat-explore').checked,
+      show_in_menu:    document.getElementById('cat-menu').checked,
+      active:          document.getElementById('cat-active').checked
     };
 
     if (!payload.name || !payload.slug) {
