@@ -24,6 +24,7 @@ async function checkAuth() {
     return null;
   }
 
+  if (typeof hidePageLoader === 'function') hidePageLoader();
   return { session, member };
 }
 

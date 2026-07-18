@@ -147,7 +147,17 @@
   </style>
 </head>
 
-<body>
+<body data-loader-manual="true">
+
+  <!-- PAGE LOADER -->
+  <div class="page-loader">
+    <div class="page-loader-mark">
+      <span class="page-loader-ring" aria-hidden="true"></span>
+      <span class="page-loader-badge">S</span>
+    </div>
+  </div>
+  <noscript><style>.page-loader{display:none!important;}</style></noscript>
+  <script src="assets/js/page-loader.js"></script>
 
   <!-- NAVBAR -->
   <header class="navbar">
@@ -283,6 +293,7 @@
     const fmtDate = (d) => d ? new Date(d + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '') : '';
 
     (async () => {
+     try {
       const genre = new URLSearchParams(location.search).get('genero');
 
       // Cabeçalho
@@ -350,6 +361,9 @@
 
       if (typeof lucide !== 'undefined') lucide.createIcons();
       document.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('is-visible'));
+     } finally {
+      if (typeof hidePageLoader === 'function') hidePageLoader();
+     }
     })();
   </script>
   <script src="assets/js/interactions.js"></script>

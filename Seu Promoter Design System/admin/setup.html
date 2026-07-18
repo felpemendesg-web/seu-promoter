@@ -8,7 +8,17 @@
   <link rel="apple-touch-icon" href="/assets/images/favicon.svg">
   <link rel="stylesheet" href="assets/css/admin.css">
 </head>
-<body>
+<body data-loader-manual="true">
+  <!-- PAGE LOADER -->
+  <div class="page-loader">
+    <div class="page-loader-mark">
+      <span class="page-loader-ring" aria-hidden="true"></span>
+      <span class="page-loader-badge">S</span>
+    </div>
+  </div>
+  <noscript><style>.page-loader{display:none!important;}</style></noscript>
+  <script src="../assets/js/page-loader.js"></script>
+
   <div class="login-page">
     <div class="login-card">
       <div class="login-logo">
@@ -52,8 +62,12 @@
   <script src="assets/js/supabase-client.js"></script>
   <script>
     (async () => {
+     try {
       const { data: exists } = await db.rpc('panel_members_exist');
       if (exists) { window.location.href = 'index.html'; }
+     } finally {
+      if (typeof hidePageLoader === 'function') hidePageLoader();
+     }
     })();
 
     document.getElementById('setup-form').addEventListener('submit', async (e) => {

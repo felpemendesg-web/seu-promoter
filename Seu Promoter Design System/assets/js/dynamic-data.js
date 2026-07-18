@@ -2,7 +2,13 @@
 // O site exibe apenas o que está cadastrado no banco — seções sem dados ficam ocultas.
 
 document.addEventListener('DOMContentLoaded', async () => {
-  await Promise.all([loadBanners(), loadFeaturedEvents(), loadEvents(), loadGenres()]);
+  try {
+    await Promise.all([loadBanners(), loadFeaturedEvents(), loadEvents(), loadGenres()]);
+  } finally {
+    // O loader cobre a página inteira enquanto essas seções são montadas,
+    // então o usuário só vê o resultado final já pronto — nunca o "pipocar" uma a uma.
+    if (typeof hidePageLoader === 'function') hidePageLoader();
+  }
 });
 
 function esc(s) {

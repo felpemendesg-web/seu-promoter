@@ -406,7 +406,18 @@
   </style>
 </head>
 
-<body>
+<body data-loader-manual="true">
+
+  <!-- PAGE LOADER -->
+  <div class="page-loader">
+    <div class="page-loader-mark">
+      <span class="page-loader-ring" aria-hidden="true"></span>
+      <span class="page-loader-badge">S</span>
+    </div>
+  </div>
+  <noscript><style>.page-loader{display:none!important;}</style></noscript>
+  <script src="assets/js/page-loader.js"></script>
+
   <header class="navbar">
     <div class="container">
       <a href="index.html" class="nav-logo" aria-label="Seu Promoter Floripa"><img
@@ -677,6 +688,7 @@
   <script src="assets/js/site-nav.js"></script>
   <script>
     (async () => {
+     try {
       const id = new URLSearchParams(location.search).get('id');
       if (!id) { location.href = 'index.html'; return; }
 
@@ -796,6 +808,9 @@
 
       if (typeof lucide !== 'undefined') lucide.createIcons();
       document.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('is-visible'));
+     } finally {
+      if (typeof hidePageLoader === 'function') hidePageLoader();
+     }
     })();
   </script>
   <script src="assets/js/interactions.js"></script>
