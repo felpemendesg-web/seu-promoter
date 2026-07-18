@@ -1,7 +1,10 @@
 {
   "cleanUrls": true,
+  "redirects": [
+    { "source": "/admin", "destination": "/admin/", "permanent": false }
+  ],
   "rewrites": [
-    { "source": "/admin{/:path*}", "destination": "/Seu%20Promoter%20Design%20System/admin/:path*" },
+    { "source": "/admin/(.*)", "destination": "/Seu%20Promoter%20Design%20System/admin/$1" },
     { "source": "/(.*)",        "destination": "/Seu%20Promoter%20Design%20System/$1" }
   ],
   "headers": [
