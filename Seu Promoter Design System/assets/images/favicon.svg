@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Seu Promoter">
+  <defs>
+    <linearGradient id="yellow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffdf35"/>
+      <stop offset="0.55" stop-color="#f7d538"/>
+      <stop offset="1" stop-color="#edc72a"/>
+    </linearGradient>
+    <filter id="texture" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="7" result="noise"/>
+      <feColorMatrix in="noise" type="saturate" values="0" result="gray"/>
+      <feComponentTransfer in="gray" result="softNoise">
+        <feFuncA type="table" tableValues="0 .13"/>
+      </feComponentTransfer>
+      <feBlend in="SourceGraphic" in2="softNoise" mode="multiply"/>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#yellow)" filter="url(#texture)"/>
+  <text x="32" y="45" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="40" font-weight="800" fill="#0b0b0b">S</text>
+</svg>

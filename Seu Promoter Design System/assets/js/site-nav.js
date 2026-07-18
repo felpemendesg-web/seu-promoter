@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   nav.innerHTML = `
     <li><a href="index.html">Início</a></li>
-    ${cats.map(c => `<li><a href="genero.html?genero=${encodeURIComponent(c.name)}">${escNav(c.name)}</a></li>`).join('')}
-    <li><a href="genero.html">Outros Eventos</a></li>
+    ${cats.map(c => `<li class="animate-fade-in"><a href="genero.html?genero=${encodeURIComponent(c.name)}">${escNav(c.name)}</a></li>`).join('')}
   `;
 });
