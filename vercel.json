@@ -1,8 +1,7 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/admin",       "destination": "/Seu%20Promoter%20Design%20System/admin/index.html" },
-    { "source": "/admin/(.*)", "destination": "/Seu%20Promoter%20Design%20System/admin/$1" },
+    { "source": "/admin/?(.*)", "destination": "/Seu%20Promoter%20Design%20System/admin/$1" },
     { "source": "/(.*)",        "destination": "/Seu%20Promoter%20Design%20System/$1" }
   ],
   "headers": [
