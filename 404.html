@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página não encontrada — Seu Promoter</title>
+  <meta name="description" content="Essa página não existe ou o link mudou. Volte para o Seu Promoter e encontre os melhores eventos de Florianópolis.">
+  <meta name="robots" content="noindex, follow">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/globals.css">
+  <link rel="stylesheet" href="/assets/css/animations.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    .nf-hero {
+      position: relative;
+      overflow: hidden;
+      min-height: calc(100vh - 88px);
+      margin-top: 88px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: linear-gradient(135deg, var(--color-black) 0%, #1c1c1c 100%);
+      color: var(--color-white);
+      padding: 4rem 1.5rem;
+    }
+
+    .nf-hero::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      right: -10%;
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, rgba(247, 213, 56, 0.16) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .nf-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -35%;
+      left: -12%;
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, rgba(247, 213, 56, 0.10) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .nf-ghost-number {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: clamp(10rem, 38vw, 26rem);
+      font-weight: 800;
+      color: var(--color-white);
+      opacity: 0.04;
+      letter-spacing: -0.05em;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+      white-space: nowrap;
+    }
+
+    .nf-content {
+      position: relative;
+      z-index: 2;
+      max-width: 620px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .nf-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(247, 213, 56, 0.12);
+      color: var(--color-primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1.75rem;
+      border: 1px solid rgba(247, 213, 56, 0.25);
+    }
+
+    .nf-icon-badge {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(247, 213, 56, 0.1);
+      border: 1px solid rgba(247, 213, 56, 0.25);
+      box-shadow: 0 0 40px rgba(247, 213, 56, 0.15);
+      color: var(--color-primary);
+      margin-bottom: 1.75rem;
+    }
+
+    .nf-title {
+      font-size: clamp(1.75rem, 5vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      color: var(--color-white);
+      margin-bottom: 0.875rem;
+    }
+
+    .nf-subtitle {
+      color: var(--color-gray-400);
+      font-size: 1.05rem;
+      line-height: 1.65;
+      max-width: 480px;
+      margin: 0 auto 2rem;
+    }
+
+    .nf-search-bar {
+      display: flex;
+      background: var(--color-white);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+      width: 100%;
+      max-width: 460px;
+      margin: 0 auto 2rem;
+    }
+
+    .nf-search-input {
+      flex: 1;
+      border: none;
+      padding: 1rem 1.25rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--color-gray-800);
+      outline: none;
+      min-width: 0;
+    }
+
+    .nf-search-btn {
+      background: var(--color-black);
+      color: var(--color-white);
+      border: none;
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background var(--transition-fast);
+      flex-shrink: 0;
+    }
+
+    .nf-search-btn:hover {
+      background: #333;
+    }
+
+    .nf-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .btn-outline-light {
+      background-color: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      color: var(--color-white);
+    }
+
+    .btn-outline-light:hover {
+      background-color: var(--color-white);
+      color: var(--color-black);
+      border-color: var(--color-white);
+    }
+
+    .nf-help {
+      color: var(--color-gray-400);
+      font-size: 0.875rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .nf-help a {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .nf-help a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .nf-hero {
+        min-height: calc(100vh - 72px);
+        margin-top: 72px;
+        padding: 3rem 1.25rem;
+      }
+
+      .nf-search-bar {
+        flex-direction: column;
+        border-radius: 14px;
+      }
+
+      .nf-search-btn {
+        justify-content: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal-on-scroll,
+      .animate-slide-up,
+      .animate-scale-up {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="navbar">
+    <div class="container">
+      <a href="/" class="nav-logo" aria-label="Seu Promoter Floripa"><img
+          src="/assets/images/logo-seu-promoter.svg" alt="Seu Promoter Floripa" class="brand-logo"></a>
+      <ul class="nav-links">
+        <li><a href="/">Início</a></li>
+        <li><a href="/genero.html?genero=P12 Jurerê">P12 Jurerê</a></li>
+        <li><a href="/genero.html?genero=Stage">Stage</a></li>
+        <li><a href="/genero.html?genero=Carnaval">Carnaval</a></li>
+        <li><a href="/genero.html?genero=Réveillon">Réveillon</a></li>
+        <li><a href="/genero.html">Outros Eventos</a></li>
+      </ul>
+      <a href="https://chat.whatsapp.com/B6zgGEb4gGm3YR0DasbXNB" target="_blank" rel="noopener" class="btn"
+        style="background: var(--color-black); color: var(--color-white); font-size: 0.875rem; gap: 0.4rem; align-items: center;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"
+          style="display: block;">
+          <path
+            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.455 5.703 1.456h.004c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+        Comunidade
+      </a>
+    </div>
+  </header>
+
+  <section class="nf-hero">
+    <span class="nf-ghost-number" aria-hidden="true">404</span>
+
+    <div class="nf-content">
+      <span class="nf-badge">Erro 404</span>
+
+      <div class="nf-icon-badge animate-scale-up">
+        <i data-lucide="search-x" style="width: 40px; height: 40px;"></i>
+      </div>
+
+      <h1 class="nf-title animate-slide-up delay-100">Esse link não está no line-up.</h1>
+      <p class="nf-subtitle animate-slide-up delay-200">
+        A página que você procura não existe, mudou de endereço ou o evento já encerrou.
+        Mas a festa em Floripa continua — bora encontrar o que você tá procurando.
+      </p>
+
+      <form class="nf-search-bar animate-slide-up delay-300" action="/busca.html" method="get">
+        <input type="text" class="nf-search-input" name="q" placeholder="Buscar evento, artista ou local..." required>
+        <button class="nf-search-btn" type="submit">
+          <i data-lucide="search" style="width: 16px; height: 16px;"></i>
+          Buscar
+        </button>
+      </form>
+
+      <div class="nf-actions animate-slide-up delay-300">
+        <a href="/" class="btn btn-primary hover-lift">
+          <i data-lucide="home" style="width: 16px; height: 16px; margin-right: 0.4rem;"></i>
+          Voltar para o Início
+        </a>
+        <a href="/genero.html" class="btn btn-outline-light hover-lift">
+          Ver Todos os Eventos
+          <i data-lucide="arrow-right" style="width: 16px; height: 16px; margin-left: 0.4rem;"></i>
+        </a>
+      </div>
+
+      <p class="nf-help animate-slide-up delay-400">
+        <i data-lucide="message-circle" style="width: 15px; height: 15px;"></i>
+        Precisa de ajuda? Fala com a gente no
+        <a href="https://wa.me/5548996053430?text=Ol%C3%A1%21%20Encontrei%20um%20link%20quebrado%20no%20site%20e%20gostaria%20de%20ajuda." target="_blank" rel="noopener">WhatsApp</a>
+      </p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="/" class="nav-logo" aria-label="Seu Promoter Floripa"><img
+              src="/assets/images/logo-seu-promoter.svg" alt="Seu Promoter Floripa"
+              class="brand-logo brand-logo-footer"></a>
+        </div>
+        <div class="footer-col">
+          <h4>Institucional</h4>
+          <ul>
+            <li><a href="#">Contato</a></li>
+            <li><a href="#">Política de Privacidade</a></li>
+            <li><a href="#">Termos de Uso</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Siga-nos</h4>
+          <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+            <a href="https://www.instagram.com/seupromoterfloripa/" target="_blank" rel="noopener" class="social-icon"
+              aria-label="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"
+                style="display: block;">
+                <path
+                  d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204 0.013-3.583 0.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
+              </svg>
+            </a>
+            <a href="https://www.tiktok.com/@seupromoterfloripa?_r=1&_t=ZS-97R5voLqK6J" target="_blank" rel="noopener" class="social-icon" aria-label="TikTok">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display: block;">
+                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.95v7.4c-.01 1.94-.69 3.84-1.95 5.3-1.28 1.45-3.08 2.38-5.02 2.62-1.92.23-3.92-.12-5.59-1.12-1.64-1-2.9-2.52-3.48-4.32-.57-1.81-.46-3.8.31-5.54.78-1.74 2.14-3.17 3.86-3.95 1.74-.78 3.73-.9 5.56-.34v4.13c-1.1-.28-2.29-.16-3.3.38-1.02.55-1.78 1.48-2.11 2.59-.33 1.1-.15 2.3.49 3.25.64.93 1.64 1.54 2.8 1.68 1.15.13 2.35-.16 3.28-.84.94-.68 1.54-1.72 1.68-2.87V.02z"/>
+              </svg>
+            </a>
+          </div>
+          <p style="color: var(--color-gray-400); font-size: 0.8rem; line-height: 1.6;">
+            📍 Florianópolis, SC<br>
+            contato@seupromoter.com.br
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Seu Promoter. Todos os direitos reservados. Florianópolis, SC.
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/interactions.js"></script>
+</body>
+
+</html>
