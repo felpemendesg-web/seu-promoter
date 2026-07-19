@@ -4,11 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Busca — Eventos em Florianópolis | Seu Promoter</title>
+  <title>Termos de Uso | Seu Promoter</title>
   <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
   <link rel="apple-touch-icon" href="/assets/images/favicon.svg">
-  <meta name="description" content="Busque eventos, artistas e locais em Florianópolis no Seu Promoter.">
-  <meta name="robots" content="noindex, follow">
+  <meta name="description" content="Termos de Uso do Seu Promoter — regras de utilização do site e responsabilidades.">
+  <meta name="robots" content="index, follow">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,82 +21,33 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    .search-hero {
+    .legal-hero {
       padding: 7rem 0 3rem;
       background: linear-gradient(160deg, #111111 0%, #1a1a2e 100%);
       color: var(--color-white);
     }
+    .legal-hero h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom: 0.5rem; }
+    .legal-hero p { color: var(--color-gray-400); font-size: 0.9rem; }
 
-    .search-hero h1 {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: var(--color-white);
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.03em;
+    .legal-content { max-width: 760px; margin: 0 auto; }
+    .legal-content h2 {
+      font-size: 1.35rem;
+      margin-top: 2.5rem;
+      margin-bottom: 0.75rem;
     }
-
-    .search-hero p {
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 1rem;
-    }
-
-    .search-bar {
-      display: flex;
-      background: var(--color-white);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-      max-width: 560px;
-      margin: 2rem 0 0;
-    }
-
-    .search-input {
-      flex: 1;
-      min-width: 0;
-      border: none;
-      padding: 1rem 1.25rem;
-      font-family: inherit;
-      font-size: 0.95rem;
+    .legal-content h2:first-child { margin-top: 0; }
+    .legal-content p, .legal-content li {
       color: var(--color-gray-800);
-      outline: none;
+      line-height: 1.75;
+      margin-bottom: 0.875rem;
     }
-
-    .search-btn {
-      background: var(--color-black);
-      color: var(--color-white);
-      border: none;
-      padding: 1rem 1.5rem;
-      cursor: pointer;
-      font-family: inherit;
-      font-weight: 600;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: background var(--transition-fast);
-      flex-shrink: 0;
-    }
-
-    .search-btn:hover { background: #333; }
-
-    .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-    .results-count { font-size: 0.875rem; color: var(--color-gray-800); }
-    .results-count strong { color: var(--color-black); }
-
-    .empty-events { text-align: center; padding: 4rem 1rem; color: var(--color-gray-500); }
-    .empty-events h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--color-black); }
-
-    @media (max-width: 768px) {
-      .search-hero h1 { font-size: 1.75rem; }
-    }
-
-    @media (max-width: 480px) {
-      .nav-links { display: none; }
-    }
+    .legal-content ul { padding-left: 1.25rem; margin-bottom: 1rem; }
+    .legal-content a { color: var(--color-primary-hover); text-decoration: underline; }
+    .legal-content strong { color: var(--color-black); }
   </style>
 </head>
 
-<body data-loader-manual="true">
+<body>
 
   <!-- PAGE LOADER -->
   <div class="page-loader">
@@ -108,7 +59,6 @@
   <noscript><style>.page-loader{display:none!important;}</style></noscript>
   <script src="assets/js/page-loader.js"></script>
 
-  <!-- NAVBAR -->
   <header class="navbar">
     <div class="container">
       <a href="index.html" class="nav-logo" aria-label="Seu Promoter Floripa"><img
@@ -131,38 +81,57 @@
     </div>
   </header>
 
-  <!-- HERO DE BUSCA -->
-  <section class="search-hero">
+  <section class="legal-hero">
     <div class="container">
-      <h1 id="search-title">Buscar eventos</h1>
-      <p id="search-subtitle">Encontre eventos, artistas e locais em Florianópolis.</p>
-      <form class="search-bar" action="busca.html" method="get">
-        <input type="text" class="search-input" name="q" id="search-input" placeholder="Buscar evento, artista ou local..." required>
-        <button class="search-btn" type="submit">
-          <i data-lucide="search" style="width: 16px; height: 16px;"></i>
-          Buscar
-        </button>
-      </form>
+      <h1>Termos de Uso</h1>
+      <p>Última atualização: julho de 2026</p>
     </div>
   </section>
 
-  <!-- RESULTADOS -->
   <section class="section">
     <div class="container">
-      <div class="results-header">
-        <p class="results-count" id="results-count"></p>
-      </div>
+      <div class="legal-content">
+        <p>Estes Termos de Uso regulam o acesso e a utilização do site <strong>seupromoterfloripa.com.br</strong> ("Site"), operado pelo <strong>Seu Promoter</strong>. Ao acessar o Site, você concorda integralmente com estes termos.</p>
 
-      <div class="grid-3" id="events-grid"></div>
+        <h2>1. Descrição do serviço</h2>
+        <p>O Seu Promoter é uma plataforma de divulgação e descoberta de eventos em Florianópolis/SC (shows, festas, festivais e eventos similares). O Site funciona como uma vitrine: cada evento listado direciona o usuário para o canal oficial de venda de ingressos do produtor ou plataforma parceira responsável. <strong>O Seu Promoter não vende ingressos diretamente e não processa pagamentos.</strong></p>
 
-      <div class="empty-events" id="empty-state" style="display:none;">
-        <h3>Nenhum evento encontrado</h3>
-        <p>Tente buscar por outro termo — nome do evento, artista, gênero ou local.</p>
+        <h2>2. Acesso ao site</h2>
+        <p>A navegação pelo Site é gratuita e não exige cadastro. O painel administrativo é de uso restrito à equipe autorizada do Seu Promoter, mediante convite e credenciais próprias, e não está disponível para o público em geral.</p>
+
+        <h2>3. Responsabilidades do usuário</h2>
+        <ul>
+          <li>Utilizar o Site de forma lícita, sem violar direitos de terceiros ou tentar comprometer sua segurança;</li>
+          <li>Conferir sempre as informações oficiais de cada evento (data, local, valores) diretamente com o produtor antes de efetuar qualquer compra;</li>
+          <li>Não utilizar o Site para fins fraudulentos ou para distribuir conteúdo ilegal.</li>
+        </ul>
+
+        <h2>4. Compra de ingressos e eventos de terceiros</h2>
+        <p>A compra de ingressos ocorre inteiramente em plataformas de terceiros, para as quais o usuário é redirecionado a partir do Site. O Seu Promoter não é parte na relação de compra e venda, não garante a realização, qualidade, cancelamento ou alteração de nenhum evento, e não se responsabiliza por problemas na plataforma de venda, disponibilidade de ingressos, reembolsos ou qualquer questão relativa à transação — que devem ser tratados diretamente com o produtor ou plataforma responsável.</p>
+
+        <h2>5. Propriedade intelectual</h2>
+        <p>A marca "Seu Promoter", o layout, o design e os textos originais do Site são de propriedade do Seu Promoter e protegidos por lei. Imagens e informações de eventos de terceiros pertencem aos respectivos produtores/organizadores. É vedada a reprodução do conteúdo do Site sem autorização prévia.</p>
+
+        <h2>6. Limitação de responsabilidade</h2>
+        <p>O Site é fornecido "no estado em que se encontra". Empenhamo-nos para manter as informações atualizadas e o Site disponível, mas não garantimos operação ininterrupta ou isenta de erros, e não nos responsabilizamos por danos decorrentes do uso ou da impossibilidade de uso do Site, nem por decisões tomadas com base em informações de eventos de terceiros.</p>
+
+        <h2>7. Links para sites de terceiros</h2>
+        <p>O Site contém links para plataformas de venda de ingressos e redes sociais de terceiros. Não temos controle sobre o conteúdo ou as práticas desses sites e não nos responsabilizamos por eles. O acesso a esses links é de responsabilidade exclusiva do usuário.</p>
+
+        <h2>8. Alterações destes termos</h2>
+        <p>Podemos atualizar estes Termos de Uso periodicamente. A versão vigente é sempre a publicada nesta página, com a data da última atualização indicada no topo.</p>
+
+        <h2>9. Legislação aplicável</h2>
+        <p>Estes Termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro da comarca de Florianópolis/SC para dirimir quaisquer controvérsias decorrentes destes Termos, com renúncia a qualquer outro, por mais privilegiado que seja.</p>
+
+        <h2>10. Contato</h2>
+        <p>Dúvidas sobre estes Termos podem ser enviadas para <a href="mailto:contato@seupromoter.com.br">contato@seupromoter.com.br</a> ou pelo <a href="https://wa.me/5548996053430" target="_blank" rel="noopener">WhatsApp</a>.</p>
+
+        <p>Veja também nossa <a href="politica-privacidade.html">Política de Privacidade</a>.</p>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
@@ -211,61 +180,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/js/supabase-client.js"></script>
   <script src="assets/js/site-nav.js"></script>
-  <script>
-    const esc = (s) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    const safeUrl = (u) => { try { const p = new URL(u, location.origin).protocol; return (p === 'http:' || p === 'https:') ? u : '#'; } catch { return '#'; } };
-    const fmtDate = (d) => d ? new Date(d + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '') : '';
-
-    (async () => {
-     try {
-      const q = (new URLSearchParams(location.search).get('q') || '').trim();
-      if (!q) return;
-
-      document.getElementById('search-input').value = q;
-      document.getElementById('search-title').textContent = `Resultados para "${q}"`;
-      document.getElementById('search-subtitle').textContent = 'Veja o que encontramos para a sua busca.';
-      document.title = `"${q}" — Busca | Seu Promoter`;
-
-      // Remove caracteres que quebram a sintaxe do filtro .or() do PostgREST
-      const term = q.replace(/[,()%]/g, ' ').trim();
-
-      const { data: events } = await db
-        .from('events')
-        .select('*')
-        .eq('active', true)
-        .or(`title.ilike.%${term}%,location.ilike.%${term}%,genre.ilike.%${term}%,venue_name.ilike.%${term}%,subtitle.ilike.%${term}%`)
-        .order('date', { ascending: true });
-
-      const count = events?.length || 0;
-      document.getElementById('results-count').innerHTML =
-        `<strong>${count} evento${count === 1 ? '' : 's'}</strong> encontrado${count === 1 ? '' : 's'} para "${esc(q)}"`;
-
-      if (count === 0) {
-        document.getElementById('empty-state').style.display = '';
-      } else {
-        document.getElementById('events-grid').innerHTML = events.map((ev, i) => `
-          <article class="event-card hover-glow">
-            <div style="overflow: hidden;">
-              <img src="${esc(safeUrl(ev.image_url)) || 'assets/images/show.jpg'}" alt="${esc(ev.title)}" class="event-card-img">
-            </div>
-            <div class="event-card-body">
-              <span class="event-date">${fmtDate(ev.date)}${ev.time ? ' · ' + esc(ev.time) : ''}</span>
-              <h3 class="event-title">${esc(ev.title)}</h3>
-              ${ev.location ? `<p class="event-location"><i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>${esc(ev.location)}</p>` : ''}
-              <div class="event-footer">
-                <a href="evento.html?id=${ev.id}" class="btn btn-primary">Ver Evento</a>
-              </div>
-            </div>
-          </article>
-        `).join('');
-      }
-
-      if (typeof lucide !== 'undefined') lucide.createIcons();
-     } finally {
-      if (typeof hidePageLoader === 'function') hidePageLoader();
-     }
-    })();
-  </script>
   <script src="assets/js/interactions.js"></script>
 </body>
 

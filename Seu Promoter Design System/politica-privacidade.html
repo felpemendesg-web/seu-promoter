@@ -4,11 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Busca — Eventos em Florianópolis | Seu Promoter</title>
+  <title>Política de Privacidade | Seu Promoter</title>
   <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
   <link rel="apple-touch-icon" href="/assets/images/favicon.svg">
-  <meta name="description" content="Busque eventos, artistas e locais em Florianópolis no Seu Promoter.">
-  <meta name="robots" content="noindex, follow">
+  <meta name="description" content="Política de Privacidade do Seu Promoter — como coletamos, usamos e protegemos seus dados.">
+  <meta name="robots" content="index, follow">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,82 +21,33 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    .search-hero {
+    .legal-hero {
       padding: 7rem 0 3rem;
       background: linear-gradient(160deg, #111111 0%, #1a1a2e 100%);
       color: var(--color-white);
     }
+    .legal-hero h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom: 0.5rem; }
+    .legal-hero p { color: var(--color-gray-400); font-size: 0.9rem; }
 
-    .search-hero h1 {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: var(--color-white);
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.03em;
+    .legal-content { max-width: 760px; margin: 0 auto; }
+    .legal-content h2 {
+      font-size: 1.35rem;
+      margin-top: 2.5rem;
+      margin-bottom: 0.75rem;
     }
-
-    .search-hero p {
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 1rem;
-    }
-
-    .search-bar {
-      display: flex;
-      background: var(--color-white);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-      max-width: 560px;
-      margin: 2rem 0 0;
-    }
-
-    .search-input {
-      flex: 1;
-      min-width: 0;
-      border: none;
-      padding: 1rem 1.25rem;
-      font-family: inherit;
-      font-size: 0.95rem;
+    .legal-content h2:first-child { margin-top: 0; }
+    .legal-content p, .legal-content li {
       color: var(--color-gray-800);
-      outline: none;
+      line-height: 1.75;
+      margin-bottom: 0.875rem;
     }
-
-    .search-btn {
-      background: var(--color-black);
-      color: var(--color-white);
-      border: none;
-      padding: 1rem 1.5rem;
-      cursor: pointer;
-      font-family: inherit;
-      font-weight: 600;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: background var(--transition-fast);
-      flex-shrink: 0;
-    }
-
-    .search-btn:hover { background: #333; }
-
-    .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-    .results-count { font-size: 0.875rem; color: var(--color-gray-800); }
-    .results-count strong { color: var(--color-black); }
-
-    .empty-events { text-align: center; padding: 4rem 1rem; color: var(--color-gray-500); }
-    .empty-events h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--color-black); }
-
-    @media (max-width: 768px) {
-      .search-hero h1 { font-size: 1.75rem; }
-    }
-
-    @media (max-width: 480px) {
-      .nav-links { display: none; }
-    }
+    .legal-content ul { padding-left: 1.25rem; margin-bottom: 1rem; }
+    .legal-content a { color: var(--color-primary-hover); text-decoration: underline; }
+    .legal-content strong { color: var(--color-black); }
   </style>
 </head>
 
-<body data-loader-manual="true">
+<body>
 
   <!-- PAGE LOADER -->
   <div class="page-loader">
@@ -108,7 +59,6 @@
   <noscript><style>.page-loader{display:none!important;}</style></noscript>
   <script src="assets/js/page-loader.js"></script>
 
-  <!-- NAVBAR -->
   <header class="navbar">
     <div class="container">
       <a href="index.html" class="nav-logo" aria-label="Seu Promoter Floripa"><img
@@ -131,38 +81,55 @@
     </div>
   </header>
 
-  <!-- HERO DE BUSCA -->
-  <section class="search-hero">
+  <section class="legal-hero">
     <div class="container">
-      <h1 id="search-title">Buscar eventos</h1>
-      <p id="search-subtitle">Encontre eventos, artistas e locais em Florianópolis.</p>
-      <form class="search-bar" action="busca.html" method="get">
-        <input type="text" class="search-input" name="q" id="search-input" placeholder="Buscar evento, artista ou local..." required>
-        <button class="search-btn" type="submit">
-          <i data-lucide="search" style="width: 16px; height: 16px;"></i>
-          Buscar
-        </button>
-      </form>
+      <h1>Política de Privacidade</h1>
+      <p>Última atualização: julho de 2026</p>
     </div>
   </section>
 
-  <!-- RESULTADOS -->
   <section class="section">
     <div class="container">
-      <div class="results-header">
-        <p class="results-count" id="results-count"></p>
-      </div>
+      <div class="legal-content">
+        <p>Esta Política de Privacidade descreve como o <strong>Seu Promoter</strong> ("nós") coleta, usa, armazena e protege as informações de quem visita ou utiliza o site <strong>seupromoterfloripa.com.br</strong> ("Site"). Ao usar o Site, você concorda com as práticas descritas aqui.</p>
 
-      <div class="grid-3" id="events-grid"></div>
+        <h2>1. Quem somos</h2>
+        <p>O Seu Promoter é uma plataforma de divulgação e descoberta de eventos em Florianópolis/SC. Não vendemos ingressos diretamente: cada evento listado direciona para o link oficial de compra do produtor ou plataforma parceira responsável por aquele evento.</p>
 
-      <div class="empty-events" id="empty-state" style="display:none;">
-        <h3>Nenhum evento encontrado</h3>
-        <p>Tente buscar por outro termo — nome do evento, artista, gênero ou local.</p>
+        <h2>2. Quais dados coletamos</h2>
+        <ul>
+          <li><strong>Dados de navegação:</strong> páginas visitadas, termos buscados, dispositivo e navegador utilizado, coletados de forma automática para o funcionamento do Site.</li>
+          <li><strong>Dados de contato:</strong> quando você entra em contato conosco pelo WhatsApp ou e-mail, coletamos as informações que você optar por compartilhar (nome, telefone, mensagem).</li>
+          <li><strong>Dados de conta administrativa:</strong> membros da equipe que acessam o painel administrativo têm nome, e-mail e senha (armazenada de forma criptografada) cadastrados para fins de autenticação.</li>
+        </ul>
+
+        <h2>3. Como usamos seus dados</h2>
+        <p>Usamos os dados coletados para: operar e manter o Site; responder a mensagens de contato; melhorar a experiência de navegação e o conteúdo exibido; e cumprir obrigações legais quando aplicável. Não vendemos seus dados pessoais a terceiros.</p>
+
+        <h2>4. Compartilhamento com terceiros</h2>
+        <p>Ao clicar em "Comprar ingresso" ou similar, você é redirecionado para o site do produtor/plataforma parceira responsável pela venda daquele evento específico — a partir desse momento, o tratamento dos seus dados passa a ser regido pela política de privacidade daquele terceiro, sobre a qual não temos controle. Recomendamos a leitura da política de cada plataforma antes de finalizar uma compra.</p>
+
+        <h2>5. Cookies</h2>
+        <p>O Site pode utilizar cookies e tecnologias similares para lembrar preferências e entender como os visitantes utilizam o Site. Você pode desativar cookies nas configurações do seu navegador, o que pode limitar algumas funcionalidades.</p>
+
+        <h2>6. Segurança dos dados</h2>
+        <p>Adotamos medidas técnicas e organizacionais razoáveis para proteger seus dados contra acesso não autorizado, perda ou alteração, incluindo controle de acesso e criptografia de senhas. Nenhum sistema é 100% infalível, e trabalhamos continuamente para manter o Site seguro.</p>
+
+        <h2>7. Seus direitos (LGPD)</h2>
+        <p>Nos termos da Lei Geral de Proteção de Dados (Lei nº 13.709/2018), você pode solicitar a qualquer momento: confirmação da existência de tratamento, acesso aos seus dados, correção de dados incompletos ou desatualizados, anonimização ou eliminação de dados desnecessários, portabilidade e revogação do consentimento. Para exercer esses direitos, entre em contato pelos canais indicados na seção 9.</p>
+
+        <h2>8. Retenção de dados</h2>
+        <p>Mantemos os dados coletados apenas pelo tempo necessário para cumprir as finalidades descritas nesta política ou conforme exigido por lei, após o que são excluídos ou anonimizados.</p>
+
+        <h2>9. Contato</h2>
+        <p>Dúvidas sobre esta política ou solicitações relacionadas aos seus dados podem ser enviadas para <a href="mailto:contato@seupromoter.com.br">contato@seupromoter.com.br</a> ou pelo <a href="https://wa.me/5548996053430" target="_blank" rel="noopener">WhatsApp</a>.</p>
+
+        <h2>10. Alterações nesta política</h2>
+        <p>Esta política pode ser atualizada periodicamente para refletir mudanças em nossas práticas ou por exigência legal. A data da última atualização está sempre indicada no topo desta página.</p>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
@@ -211,61 +178,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/js/supabase-client.js"></script>
   <script src="assets/js/site-nav.js"></script>
-  <script>
-    const esc = (s) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    const safeUrl = (u) => { try { const p = new URL(u, location.origin).protocol; return (p === 'http:' || p === 'https:') ? u : '#'; } catch { return '#'; } };
-    const fmtDate = (d) => d ? new Date(d + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '') : '';
-
-    (async () => {
-     try {
-      const q = (new URLSearchParams(location.search).get('q') || '').trim();
-      if (!q) return;
-
-      document.getElementById('search-input').value = q;
-      document.getElementById('search-title').textContent = `Resultados para "${q}"`;
-      document.getElementById('search-subtitle').textContent = 'Veja o que encontramos para a sua busca.';
-      document.title = `"${q}" — Busca | Seu Promoter`;
-
-      // Remove caracteres que quebram a sintaxe do filtro .or() do PostgREST
-      const term = q.replace(/[,()%]/g, ' ').trim();
-
-      const { data: events } = await db
-        .from('events')
-        .select('*')
-        .eq('active', true)
-        .or(`title.ilike.%${term}%,location.ilike.%${term}%,genre.ilike.%${term}%,venue_name.ilike.%${term}%,subtitle.ilike.%${term}%`)
-        .order('date', { ascending: true });
-
-      const count = events?.length || 0;
-      document.getElementById('results-count').innerHTML =
-        `<strong>${count} evento${count === 1 ? '' : 's'}</strong> encontrado${count === 1 ? '' : 's'} para "${esc(q)}"`;
-
-      if (count === 0) {
-        document.getElementById('empty-state').style.display = '';
-      } else {
-        document.getElementById('events-grid').innerHTML = events.map((ev, i) => `
-          <article class="event-card hover-glow">
-            <div style="overflow: hidden;">
-              <img src="${esc(safeUrl(ev.image_url)) || 'assets/images/show.jpg'}" alt="${esc(ev.title)}" class="event-card-img">
-            </div>
-            <div class="event-card-body">
-              <span class="event-date">${fmtDate(ev.date)}${ev.time ? ' · ' + esc(ev.time) : ''}</span>
-              <h3 class="event-title">${esc(ev.title)}</h3>
-              ${ev.location ? `<p class="event-location"><i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>${esc(ev.location)}</p>` : ''}
-              <div class="event-footer">
-                <a href="evento.html?id=${ev.id}" class="btn btn-primary">Ver Evento</a>
-              </div>
-            </div>
-          </article>
-        `).join('');
-      }
-
-      if (typeof lucide !== 'undefined') lucide.createIcons();
-     } finally {
-      if (typeof hidePageLoader === 'function') hidePageLoader();
-     }
-    })();
-  </script>
   <script src="assets/js/interactions.js"></script>
 </body>
 
