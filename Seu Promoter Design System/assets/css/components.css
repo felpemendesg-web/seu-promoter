@@ -106,6 +106,19 @@
   color: var(--color-primary);
 }
 
+.mobile-nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: var(--color-black);
+  cursor: pointer;
+}
+
 /* Hero Section */
 .hero {
   padding: 5rem 0;
@@ -258,8 +271,42 @@
     padding: 0.65rem 0.9rem;
   }
 
+  .mobile-nav-toggle {
+    display: flex;
+  }
+
   .nav-links {
-    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--color-white);
+    box-shadow: var(--shadow-lg);
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: max-height 0.3s ease, opacity 0.25s ease;
+  }
+
+  .nav-links.open {
+    max-height: 70vh;
+    opacity: 1;
+    overflow-y: auto;
+    pointer-events: auto;
+    border-top: 1px solid var(--color-gray-200);
+  }
+
+  .nav-links li {
+    width: 100%;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--color-gray-100);
   }
 
   .grid-3 {

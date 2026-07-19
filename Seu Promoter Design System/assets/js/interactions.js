@@ -37,6 +37,25 @@ document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
   }
 
+  // 3b. Mobile Nav Toggle
+  const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+  const navLinksList = document.querySelector('.nav-links');
+  if (mobileNavToggle && navLinksList) {
+    mobileNavToggle.addEventListener('click', () => {
+      const isOpen = navLinksList.classList.toggle('open');
+      mobileNavToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    // site-nav.js substitui o conteúdo de .nav-links dinamicamente — delegação
+    // no elemento pai (que não muda) mantém o fechar-ao-clicar funcionando.
+    navLinksList.addEventListener('click', (e) => {
+      if (e.target.closest('a')) {
+        navLinksList.classList.remove('open');
+        mobileNavToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
   // 4. Featured Carousel Sync & Interaction
   const container = document.querySelector('.carousel-container');
   const grid = container?.querySelector('.featured-grid');
