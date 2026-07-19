@@ -1,5 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
-  
+
+  // 0. Mobile Nav Toggle — roda primeiro e isolado, para que uma falha em
+  // qualquer outro bloco abaixo (lucide, carrossel, etc.) nunca impeça o
+  // menu mobile de funcionar.
+  try {
+    const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+    const navLinksList = document.querySelector('.nav-links');
+    if (mobileNavToggle && navLinksList) {
+      mobileNavToggle.addEventListener('click', () => {
+        const isOpen = navLinksList.classList.toggle('open');
+        mobileNavToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+
+      // site-nav.js substitui o conteúdo de .nav-links dinamicamente — delegação
+      // no elemento pai (que não muda) mantém o fechar-ao-clicar funcionando.
+      navLinksList.addEventListener('click', (e) => {
+        if (e.target.closest('a')) {
+          navLinksList.classList.remove('open');
+          mobileNavToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+  } catch (err) {
+    console.error('Mobile nav toggle setup falhou:', err);
+  }
+
   // 1. Scroll Reveal Logic
   const revealElements = document.querySelectorAll('.reveal-on-scroll');
   
@@ -33,27 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 3. Initialize Lucide Icons if available
+  // Envolvido em try/catch: uma falha aqui (ícone inválido, lib não carregada
+  // por bloqueio de rede, etc.) não pode travar o resto desta função.
   if (typeof lucide !== 'undefined') {
-    lucide.createIcons();
-  }
-
-  // 3b. Mobile Nav Toggle
-  const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
-  const navLinksList = document.querySelector('.nav-links');
-  if (mobileNavToggle && navLinksList) {
-    mobileNavToggle.addEventListener('click', () => {
-      const isOpen = navLinksList.classList.toggle('open');
-      mobileNavToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    });
-
-    // site-nav.js substitui o conteúdo de .nav-links dinamicamente — delegação
-    // no elemento pai (que não muda) mantém o fechar-ao-clicar funcionando.
-    navLinksList.addEventListener('click', (e) => {
-      if (e.target.closest('a')) {
-        navLinksList.classList.remove('open');
-        mobileNavToggle.setAttribute('aria-expanded', 'false');
-      }
-    });
+    try {
+      lucide.createIcons();
+    } catch (err) {
+      console.error('lucide.createIcons() falhou:', err);
+    }
   }
 
   // 4. Featured Carousel Sync & Interaction
