@@ -79,9 +79,9 @@
         </button>
         <h1>Membros do Painel</h1>
       </div>
-      <button class="btn btn-primary" onclick="openInviteModal()">
+      <button class="btn btn-primary" onclick="openAddModal()">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Convidar Membro
+        Adicionar Membro
       </button>
     </div>
 
@@ -93,13 +93,12 @@
               <tr>
                 <th>Membro</th>
                 <th>Email</th>
-                <th>Cargo</th>
                 <th>Desde</th>
                 <th>Ações</th>
               </tr>
             </thead>
             <tbody id="members-body">
-              <tr><td colspan="5"><div class="loading"><div class="spinner"></div>Carregando…</div></td></tr>
+              <tr><td colspan="4"><div class="loading"><div class="spinner"></div>Carregando…</div></td></tr>
             </tbody>
           </table>
         </div>
@@ -108,69 +107,37 @@
   </main>
 </div>
 
-<!-- Invite Modal -->
-<div class="modal-overlay" id="invite-modal">
+<!-- Add Member Modal -->
+<div class="modal-overlay" id="add-modal">
   <div class="modal" style="max-width:480px;">
     <div class="modal-header">
-      <span class="modal-title">Convidar Membro</span>
-      <button class="modal-close" onclick="closeInviteModal()">
+      <span class="modal-title">Adicionar Membro</span>
+      <button class="modal-close" onclick="closeAddModal()">
         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <div class="modal-body">
-      <p style="color:var(--text-muted); font-size:0.875rem; margin-bottom:1.5rem;">Gere um link de convite para compartilhar com o novo membro. O link é válido para uso único.</p>
-
+      <div class="alert alert-error" id="add-error-msg" style="display:none;"></div>
       <div class="form-group">
-        <label class="form-label">Cargo do Novo Membro</label>
-        <select id="invite-role" class="form-input">
-          <option value="editor">Editor — pode gerenciar eventos, categorias e banners</option>
-          <option value="admin">Administrador — acesso completo incluindo membros</option>
-        </select>
-      </div>
-
-      <div id="invite-link-area" style="display:none;">
-        <label class="form-label">Link de Convite</label>
-        <div class="copy-link-box" id="invite-link-text"></div>
-        <button class="btn btn-secondary btn-sm" onclick="copyInviteLink()">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copiar Link
-        </button>
-        <p class="form-hint" style="margin-top:0.5rem;">Compartilhe este link com o membro. Ele expira após o primeiro uso.</p>
-      </div>
-    </div>
-    <div class="modal-footer" id="invite-footer">
-      <button class="btn btn-ghost" onclick="closeInviteModal()">Cancelar</button>
-      <button class="btn btn-primary" id="generate-btn" onclick="generateInvite()">Gerar Link</button>
-    </div>
-  </div>
-</div>
-
-<!-- Edit Role Modal -->
-<div class="modal-overlay" id="edit-modal">
-  <div class="modal" style="max-width:400px;">
-    <div class="modal-header">
-      <span class="modal-title">Alterar Cargo</span>
-      <button class="modal-close" onclick="closeEditModal()">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="modal-body">
-      <input type="hidden" id="edit-member-id">
-      <div class="form-group">
-        <label class="form-label">Membro</label>
-        <input type="text" id="edit-member-name" class="form-input" disabled>
+        <label class="form-label">Nome Completo</label>
+        <input type="text" id="add-name" class="form-input" placeholder="Nome do membro">
       </div>
       <div class="form-group">
-        <label class="form-label">Cargo</label>
-        <select id="edit-role" class="form-input">
-          <option value="editor">Editor</option>
-          <option value="admin">Administrador</option>
-        </select>
+        <label class="form-label">Email</label>
+        <input type="email" id="add-email" class="form-input" placeholder="email@exemplo.com" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input type="password" id="add-password" class="form-input" placeholder="Mínimo 6 caracteres" minlength="6" autocomplete="new-password">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar Senha</label>
+        <input type="password" id="add-confirm" class="form-input" placeholder="Repita a senha" autocomplete="new-password">
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeEditModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveRole()">Salvar</button>
+      <button class="btn btn-ghost" onclick="closeAddModal()">Cancelar</button>
+      <button class="btn btn-primary" id="add-btn" onclick="addMember()">Adicionar</button>
     </div>
   </div>
 </div>
@@ -197,7 +164,7 @@ async function loadMembers() {
 
   membersById = {};
   if (!members || members.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><h3>Nenhum membro</h3></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><h3>Nenhum membro</h3></div></td></tr>`;
     return;
   }
 
@@ -212,18 +179,14 @@ async function loadMembers() {
         </div>
       </td>
       <td class="text-muted text-sm">${esc(m.email)}</td>
-      <td>${m.role === 'admin' ? '<span class="badge badge-admin">Admin</span>' : '<span class="badge badge-editor">Editor</span>'}</td>
       <td class="text-muted text-sm">${new Date(m.created_at).toLocaleDateString('pt-BR')}</td>
       <td>
+        ${m.id !== currentMemberId ? `
         <div class="actions-cell">
-          <button class="btn btn-icon btn-ghost" title="Alterar cargo" data-action="edit" data-id="${esc(m.id)}">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          </button>
-          ${m.id !== currentMemberId ? `
           <button class="btn btn-icon btn-danger" title="Remover membro" data-action="remove" data-id="${esc(m.id)}">
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-          </button>` : ''}
-        </div>
+          </button>
+        </div>` : ''}
       </td>
     </tr>
   `).join('');
@@ -234,73 +197,74 @@ document.getElementById('members-body').addEventListener('click', (e) => {
   if (!btn) return;
   const m = membersById[btn.dataset.id];
   if (!m) return;
-  if (btn.dataset.action === 'edit') openEditModal(m.id, m.name, m.role);
-  else if (btn.dataset.action === 'remove') removeMember(m.id, m.name);
+  if (btn.dataset.action === 'remove') removeMember(m.id, m.name);
 });
 
-function openInviteModal() {
-  document.getElementById('invite-link-area').style.display = 'none';
-  document.getElementById('invite-footer').style.display = 'flex';
-  document.getElementById('generate-btn').disabled = false;
-  document.getElementById('generate-btn').textContent = 'Gerar Link';
-  document.getElementById('invite-modal').classList.add('open');
+function openAddModal() {
+  document.getElementById('add-name').value = '';
+  document.getElementById('add-email').value = '';
+  document.getElementById('add-password').value = '';
+  document.getElementById('add-confirm').value = '';
+  document.getElementById('add-error-msg').style.display = 'none';
+  document.getElementById('add-btn').disabled = false;
+  document.getElementById('add-btn').textContent = 'Adicionar';
+  document.getElementById('add-modal').classList.add('open');
 }
 
-function closeInviteModal() {
-  document.getElementById('invite-modal').classList.remove('open');
+function closeAddModal() {
+  document.getElementById('add-modal').classList.remove('open');
 }
 
-async function generateInvite() {
-  const btn = document.getElementById('generate-btn');
-  btn.textContent = 'Gerando…';
+async function addMember() {
+  const btn   = document.getElementById('add-btn');
+  const errEl = document.getElementById('add-error-msg');
+  const name     = document.getElementById('add-name').value.trim();
+  const email    = document.getElementById('add-email').value.trim();
+  const password = document.getElementById('add-password').value;
+  const confirm  = document.getElementById('add-confirm').value;
+
+  errEl.style.display = 'none';
+
+  if (!name) { errEl.textContent = 'Informe o nome do membro.'; errEl.style.display = 'block'; return; }
+  if (!email) { errEl.textContent = 'Informe o email do membro.'; errEl.style.display = 'block'; return; }
+  if (password.length < 6) { errEl.textContent = 'A senha precisa ter no mínimo 6 caracteres.'; errEl.style.display = 'block'; return; }
+  if (password !== confirm) { errEl.textContent = 'As senhas não coincidem.'; errEl.style.display = 'block'; return; }
+
+  btn.textContent = 'Adicionando…';
   btn.disabled = true;
 
-  const role = document.getElementById('invite-role').value;
-
-  const { data, error } = await db.from('invites').insert({ role }).select().single();
+  const { data, error } = await db.functions.invoke('create-admin-member', {
+    body: { name, email, password },
+  });
 
   if (error) {
-    showToast('Erro ao gerar convite: ' + error.message, 'error');
-    btn.textContent = 'Gerar Link';
+    // Em erro (status != 2xx), o corpo JSON da função vem em error.context, não em data.
+    let code, message;
+    try {
+      if (error.context && typeof error.context.json === 'function') {
+        const payload = await error.context.json();
+        code = payload?.error;
+        message = payload?.message;
+      }
+    } catch {}
+
+    const messages = {
+      email_in_use: 'Esse email já está cadastrado.',
+      invalid_email: 'Email inválido.',
+      weak_password: 'A senha precisa ter no mínimo 6 caracteres.',
+      name_required: 'Informe o nome do membro.',
+      forbidden: 'Você não tem permissão para adicionar membros.',
+      not_authenticated: 'Sessão expirada. Faça login novamente.',
+    };
+    errEl.textContent = messages[code] || message || 'Erro ao adicionar membro.';
+    errEl.style.display = 'block';
+    btn.textContent = 'Adicionar';
     btn.disabled = false;
     return;
   }
 
-  const base = window.location.origin + window.location.pathname.replace('members.html', 'invite.html');
-  const link = `${base}?token=${data.token}`;
-
-  document.getElementById('invite-link-text').textContent = link;
-  document.getElementById('invite-link-area').style.display = 'block';
-  document.getElementById('invite-footer').style.display = 'none';
-}
-
-function copyInviteLink() {
-  const link = document.getElementById('invite-link-text').textContent;
-  navigator.clipboard.writeText(link).then(() => showToast('Link copiado!')).catch(() => {
-    showToast('Não foi possível copiar. Copie manualmente.', 'error');
-  });
-}
-
-function openEditModal(id, name, role) {
-  document.getElementById('edit-member-id').value = id;
-  document.getElementById('edit-member-name').value = name;
-  document.getElementById('edit-role').value = role;
-  document.getElementById('edit-modal').classList.add('open');
-}
-
-function closeEditModal() {
-  document.getElementById('edit-modal').classList.remove('open');
-}
-
-async function saveRole() {
-  const id   = document.getElementById('edit-member-id').value;
-  const role = document.getElementById('edit-role').value;
-
-  const { error } = await db.from('panel_members').update({ role }).eq('id', id);
-  if (error) { showToast('Erro: ' + error.message, 'error'); return; }
-
-  showToast('Cargo atualizado!');
-  closeEditModal();
+  showToast(`${name} foi adicionado ao painel.`);
+  closeAddModal();
   await loadMembers();
 }
 
@@ -314,11 +278,8 @@ async function removeMember(id, name) {
   await loadMembers();
 }
 
-document.getElementById('invite-modal').addEventListener('click', (e) => {
-  if (e.target === document.getElementById('invite-modal')) closeInviteModal();
-});
-document.getElementById('edit-modal').addEventListener('click', (e) => {
-  if (e.target === document.getElementById('edit-modal')) closeEditModal();
+document.getElementById('add-modal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('add-modal')) closeAddModal();
 });
 </script>
 </body>

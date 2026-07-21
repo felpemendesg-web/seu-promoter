@@ -91,6 +91,6 @@ function setUserInfo(member) {
   const avatarEl = document.getElementById('sidebar-avatar');
 
   if (nameEl)   nameEl.textContent   = member.name;
-  if (roleEl)   roleEl.textContent   = member.role === 'admin' ? 'Administrador' : 'Editor';
+  if (roleEl)   roleEl.textContent   = 'Administrador';
   if (avatarEl) avatarEl.textContent = member.name.charAt(0).toUpperCase();
 }

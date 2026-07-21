@@ -22,12 +22,13 @@ Seu Promoter Design System/
 │   │   └── vendor/purify.min.js # DOMPurify, vendorizado (sanitiza about_html)
 │   └── images/
 └── admin/
-    ├── index.html (login), setup.html (1º acesso), invite.html (aceitar convite)
+    ├── index.html (login), setup.html (1º acesso), forgot-password.html, reset-password.html
     ├── dashboard.html, events.html, categories.html, banners.html, members.html
     └── assets/js/
         ├── supabase-client.js   # client do admin (mesma anon key)
         └── auth.js              # checkAuth(), logout(), esc(), uploadImage(), toasts
 
+supabase/functions/create-admin-member/index.ts  # Edge Function: cria conta admin (email+senha) via service_role
 setup.sql        # schema + RLS + funções — fonte da verdade do banco
 migrations/      # migrations aplicadas incrementalmente, em ordem, nunca editadas retroativamente
 vercel.json      # rewrites de /admin/* + headers de segurança (CSP, X-Frame-Options...)
@@ -43,12 +44,13 @@ Esses três helpers estão **duplicados** em cada página com `<script>` inline 
 
 ### Autenticação e autorização
 - Login do admin = Supabase Auth (`signInWithPassword`) + checagem de uma linha própria em `panel_members`.
+- **Cargo único: `admin`.** Não existe mais distinção editor/admin — `panel_members.role` tem `check (role = 'admin')`. Simplificado em 2026-07 (era `admin`/`editor`, mas nunca havia diferença real de permissão no RLS).
 - **Autorização real é 100% RLS**, não o JS. Regras atuais:
-  - `panel_members`: sem policy de INSERT — só é criado via RPCs `SECURITY DEFINER` (`claim_first_admin`, `redeem_invite`), que validam convite/estado no servidor.
+  - `panel_members`: sem policy de INSERT — só é criado via `claim_first_admin` (RPC `SECURITY DEFINER`, bootstrap do 1º admin em `setup.html`) ou via a Edge Function `create-admin-member` (usa `service_role`, bypassa RLS por design — é código de servidor confiável, não client-side).
   - `events` / `categories` / `banners`: leitura pública; escrita exige `is_panel_member()`.
-  - `invites`: leitura/escrita só para admin (`is_admin()`); campo `used` só muda dentro de `redeem_invite`.
   - Storage bucket `images`: público para leitura de objeto (sem listagem), escrita exige `is_panel_member()`.
 - `is_panel_member()` / `is_admin()` são funções `SECURITY DEFINER` com `search_path` fixo — usadas nas policies para evitar recursão de RLS.
+- **Adicionar membro** (painel → Membros → "Adicionar Membro") chama `create-admin-member` com email+senha: a função verifica que quem chama já é admin, cria a conta via `auth.admin.createUser({ email_confirm: true })` (sem depender de e-mail de confirmação) e insere o membro. Substituiu o antigo fluxo de link de convite (`invites` + `validate_invite`/`redeem_invite`), que quebrava sempre que a confirmação de e-mail do projeto estava ativa. A tabela `invites` e essas duas RPCs continuam no banco (RLS já as restringe a admin), mas são **legado morto** — não recebem novos convites.
 
 ## Fluxo de manutenção
 

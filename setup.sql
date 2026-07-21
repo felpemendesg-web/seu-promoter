@@ -41,15 +41,21 @@ create table if not exists public.banners (
 );
 
 -- 4. Membros do Painel
+-- Único cargo existente é 'admin' (modelo simplificado — sem 'editor').
 create table if not exists public.panel_members (
   id         uuid primary key references auth.users(id) on delete cascade,
   name       text not null,
   email      text not null,
-  role       text default 'editor' check (role in ('admin', 'editor')),
+  role       text default 'admin' check (role = 'admin'),
   created_at timestamptz default now()
 );
 
--- 5. Convites
+-- 5. Convites (LEGADO — não usado pela UI atual)
+-- O fluxo de convite por link foi substituído pela Edge Function
+-- `create-admin-member`, que cria a conta (email+senha) e o membro do
+-- painel em uma única chamada, sem depender de e-mail de confirmação.
+-- Tabela/RPCs mantidas apenas por segurança histórica (RLS já restringe
+-- a admin); não recebem novos convites.
 create table if not exists public.invites (
   id         uuid primary key default gen_random_uuid(),
   role       text default 'editor',
@@ -193,5 +199,8 @@ create policy "img_auth_delete" on storage.objects
 --  1. Copie a URL e a anon key do projeto Supabase
 --  2. Cole em: admin/assets/js/supabase-client.js
 --  3. E em:    assets/js/supabase-client.js
---  4. Acesse /admin e faça o primeiro cadastro
+--  4. Faça o deploy da Edge Function supabase/functions/create-admin-member
+--  5. Acesse /admin e faça o primeiro cadastro (setup.html — cria o 1º admin)
+--  6. Admins seguintes: painel → Membros → "Adicionar Membro" (email + senha,
+--     via a Edge Function do passo 4 — não usa mais link de convite)
 -- ════════════════════════════════════════════════════════
