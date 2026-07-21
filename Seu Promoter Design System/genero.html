@@ -346,9 +346,12 @@
       });
       if (!genre) document.getElementById('chip-all').classList.add('active-yellow');
 
-      // Eventos
-      let query = db.from('events').select('*').eq('active', true).order('date', { ascending: true });
-      if (genre) query = query.ilike('genre', genre);
+      // Eventos (categorias!inner + filtro no relacionamento para trazer só
+      // eventos vinculados à categoria pedida; sem gênero, traz todos)
+      let query = genre
+        ? db.from('events').select('*, categories!inner(name)').eq('active', true).ilike('categories.name', genre)
+        : db.from('events').select('*, categories(name)').eq('active', true);
+      query = query.order('date', { ascending: true });
       const { data: events } = await query;
 
       const grid = document.getElementById('events-grid');

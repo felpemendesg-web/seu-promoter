@@ -42,6 +42,13 @@ Cada página pública roda um `<script>` inline que, no `DOMContentLoaded`, cons
 
 Esses três helpers estão **duplicados** em cada página com `<script>` inline (não há import/bundler). É intencional — ao copiar um padrão de uma página para outra, copie os três junto.
 
+### Modelo de dados: eventos e categorias
+Um evento pode ter **várias categorias** — relação muitos-para-muitos via `event_categories` (tabela de junção, sem colunas além das duas FKs). Não existe mais o campo de texto livre `events.genre`/`genre_icon` nem o FK escalar `events.category_id` (removidos em 2026-07; a UI nunca usava o segundo, e o primeiro exigia digitar o nome da categoria manualmente sem checagem).
+
+- **Consulta:** o Supabase auto-detecta a relação many-to-many a partir das duas FKs em `event_categories` — não é preciso mencionar essa tabela no `select()`, basta `events.select('*, categories(id, name, icon)')`. Isso só funciona porque existe **um único caminho** entre `events` e `categories`; se algum dia voltar a existir uma segunda FK direta entre as duas tabelas, o embed vira ambíguo e o PostgREST erra.
+- **Filtrar por categoria** (usado em `genero.html`): precisa do modificador `!inner` no embed para poder filtrar por ele — `events.select('*, categories!inner(name)').ilike('categories.name', genre)`.
+- **Admin (`events.html`):** o campo de categoria é um checklist multi-select das categorias já cadastradas (não cria categoria nova ali). Ao salvar, o cliente sempre apaga todos os vínculos do evento em `event_categories` e reinsere os selecionados — mais simples e correto do que calcular um diff, aceitável pelo volume baixo de categorias por evento.
+
 ### Autenticação e autorização
 - Login do admin = Supabase Auth (`signInWithPassword`) + checagem de uma linha própria em `panel_members`.
 - **Cargo único: `admin`.** Não existe mais distinção editor/admin — `panel_members.role` tem `check (role = 'admin')`. Simplificado em 2026-07 (era `admin`/`editor`, mas nunca havia diferença real de permissão no RLS).

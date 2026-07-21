@@ -5,27 +5,43 @@
 
 -- 1. Categorias
 create table if not exists public.categories (
-  id         uuid primary key default gen_random_uuid(),
-  name       text not null,
-  slug       text unique not null,
-  icon       text default 'calendar',
-  active     boolean default true,
-  created_at timestamptz default now()
+  id              uuid primary key default gen_random_uuid(),
+  name            text not null,
+  slug            text unique not null,
+  icon            text default 'calendar',
+  active          boolean default true,
+  created_at      timestamptz default now(),
+  show_in_explore boolean default true,  -- aparece no carrossel "Explorar por Gênero" da home
+  show_in_menu    boolean default false  -- aparece no menu de navegação do site
 );
 
 -- 2. Eventos
 create table if not exists public.events (
-  id          uuid primary key default gen_random_uuid(),
-  title       text not null,
-  date        date,
-  time        text,
-  location    text,
-  image_url   text,
-  ticket_url  text,
-  category_id uuid references public.categories(id) on delete set null,
-  featured    boolean default false,
-  active      boolean default true,
-  created_at  timestamptz default now()
+  id              uuid primary key default gen_random_uuid(),
+  title           text not null,
+  subtitle        text,
+  date            date,
+  time            text,
+  location        text,
+  image_url       text,
+  ticket_url      text,
+  about_html      text,          -- descrição completa (HTML livre, sanitizado no site com DOMPurify)
+  attractions     jsonb default '[]'::jsonb,      -- [{name, icon}]
+  important_info  jsonb default '[]'::jsonb,      -- [texto, texto, ...]
+  venue_name      text,
+  venue_address   text,
+  maps_url        text,
+  map_image_url   text,
+  featured        boolean default false,
+  active          boolean default true,
+  created_at      timestamptz default now()
+);
+
+-- 2b. Categorias do evento (muitos-para-muitos — um evento pode ter várias)
+create table if not exists public.event_categories (
+  event_id    uuid not null references public.events(id) on delete cascade,
+  category_id uuid not null references public.categories(id) on delete cascade,
+  primary key (event_id, category_id)
 );
 
 -- 3. Banners
@@ -143,11 +159,12 @@ revoke all on function public.claim_first_admin(text) from public;
 grant execute on function public.claim_first_admin(text) to authenticated;
 
 -- ── Row Level Security ───────────────────────────────────
-alter table public.categories   enable row level security;
-alter table public.events        enable row level security;
-alter table public.banners       enable row level security;
-alter table public.panel_members enable row level security;
-alter table public.invites       enable row level security;
+alter table public.categories       enable row level security;
+alter table public.events            enable row level security;
+alter table public.event_categories  enable row level security;
+alter table public.banners           enable row level security;
+alter table public.panel_members     enable row level security;
+alter table public.invites           enable row level security;
 
 -- Categories: leitura pública, escrita só para membros do painel
 create policy "cat_read"   on public.categories for select using (true);
@@ -160,6 +177,12 @@ create policy "ev_read"   on public.events for select using (true);
 create policy "ev_insert" on public.events for insert with check (public.is_panel_member());
 create policy "ev_update" on public.events for update using (public.is_panel_member()) with check (public.is_panel_member());
 create policy "ev_delete" on public.events for delete using (public.is_panel_member());
+
+-- Event <-> Categorias: leitura pública, escrita só para membros do painel.
+-- Sem policy de update — o cliente sempre apaga e reinsere os vínculos ao salvar um evento.
+create policy "evcat_read"   on public.event_categories for select using (true);
+create policy "evcat_insert" on public.event_categories for insert with check (public.is_panel_member());
+create policy "evcat_delete" on public.event_categories for delete using (public.is_panel_member());
 
 -- Banners: leitura pública, escrita só para membros do painel
 create policy "ban_read"   on public.banners for select using (true);

@@ -711,8 +711,10 @@
       const id = new URLSearchParams(location.search).get('id');
       if (!id) { location.href = 'index.html'; return; }
 
-      const { data: ev, error } = await db.from('events').select('*').eq('id', id).eq('active', true).single();
+      const { data: ev, error } = await db.from('events').select('*, categories(id, name)').eq('id', id).eq('active', true).single();
       if (error || !ev) { location.href = 'index.html'; return; }
+
+      const evCategories = Array.isArray(ev.categories) ? ev.categories : [];
 
       const esc = (s) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
       const safeUrl = (u) => { try { const p = new URL(u, location.origin).protocol; return (p === 'http:' || p === 'https:') ? u : '#'; } catch { return '#'; } };
@@ -722,10 +724,10 @@
 
       // Breadcrumb + hero
       document.getElementById('bc-title').textContent = ev.title;
-      if (ev.genre) {
+      if (evCategories.length) {
         const bcGenre = document.getElementById('bc-genre');
-        bcGenre.textContent = ev.genre;
-        bcGenre.href = 'genero.html?genero=' + encodeURIComponent(ev.genre);
+        bcGenre.textContent = evCategories[0].name;
+        bcGenre.href = 'genero.html?genero=' + encodeURIComponent(evCategories[0].name);
       }
       if (ev.featured) document.getElementById('ev-kicker').style.display = '';
       document.getElementById('ev-title').textContent = ev.title;
@@ -800,13 +802,23 @@
         document.getElementById('sec-map').style.display = '';
       }
 
-      // Eventos relacionados (mesmo gênero)
-      let relQuery = db.from('events').select('*').eq('active', true).neq('id', ev.id).order('date', { ascending: true }).limit(3);
-      if (ev.genre) relQuery = relQuery.eq('genre', ev.genre);
-      const { data: related } = await relQuery;
+      // Eventos relacionados (compartilham ao menos uma categoria)
+      const categoryIds = evCategories.map(c => c.id);
+      let related = [];
+      if (categoryIds.length) {
+        const { data } = await db.from('events')
+          .select('*, categories!inner(id)')
+          .eq('active', true)
+          .neq('id', ev.id)
+          .in('categories.id', categoryIds)
+          .order('date', { ascending: true });
+        // !inner pode repetir o mesmo evento uma vez por categoria em comum — deduplica por id.
+        const seen = new Set();
+        related = (data || []).filter(r => !seen.has(r.id) && seen.add(r.id)).slice(0, 3);
+      }
 
-      if (related && related.length) {
-        if (ev.genre) document.getElementById('ev-related-sub').textContent = `Outros eventos de ${ev.genre.toLowerCase()} em Florianópolis`;
+      if (related.length) {
+        if (evCategories.length) document.getElementById('ev-related-sub').textContent = `Outros eventos de ${evCategories[0].name.toLowerCase()} em Florianópolis`;
         document.getElementById('ev-related').innerHTML = related.map((r, i) => `
           <article class="event-card reveal-on-scroll delay-${(i + 1) * 100} hover-glow">
             <div style="overflow: hidden;">

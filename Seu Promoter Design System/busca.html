@@ -247,7 +247,7 @@
         .from('events')
         .select('*')
         .eq('active', true)
-        .or(`title.ilike.%${term}%,location.ilike.%${term}%,genre.ilike.%${term}%,venue_name.ilike.%${term}%,subtitle.ilike.%${term}%`)
+        .or(`title.ilike.%${term}%,location.ilike.%${term}%,venue_name.ilike.%${term}%,subtitle.ilike.%${term}%`)
         .order('date', { ascending: true });
 
       const count = events?.length || 0;

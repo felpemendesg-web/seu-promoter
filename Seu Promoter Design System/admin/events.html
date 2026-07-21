@@ -48,6 +48,21 @@
     }
     .add-row-btn:hover { border-color: #f7d538; background: #fffbe6; }
 
+    .category-checklist {
+      display: flex; flex-wrap: wrap; gap: 0.6rem;
+      padding: 0.75rem; border: 1px solid var(--border, #e5e5e5); border-radius: 8px;
+    }
+    .category-checklist label {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.85rem; cursor: pointer;
+      padding: 0.4rem 0.7rem; border-radius: 6px; border: 1px solid var(--border, #e5e5e5);
+    }
+    .category-checklist label:has(input:checked) {
+      border-color: #f7d538; background: #fffbe6;
+    }
+    .category-checklist input { margin: 0; }
+    .category-checklist .empty-hint { font-size: 0.8rem; color: var(--text-dim, #888); }
+
     /* Icon picker overlay */
     .icon-picker-overlay {
       display: none; position: fixed; inset: 0; z-index: 2000;
@@ -153,7 +168,7 @@
               <tr>
                 <th>Evento</th>
                 <th>Data</th>
-                <th>Gênero</th>
+                <th>Categorias</th>
                 <th>Destaque</th>
                 <th>Ativo</th>
                 <th>Ações</th>
@@ -205,18 +220,12 @@
         <label class="form-label">Local (curto, exibido nos cards)</label>
         <input type="text" id="event-location" class="form-input" placeholder="Ex: P12, Jurerê Internacional">
       </div>
-      <div class="form-row">
-        <div class="form-group" style="flex:1;">
-          <label class="form-label">Gênero</label>
-          <div class="dyn-row">
-            <button type="button" class="icon-btn" id="genre-icon-btn" title="Escolher ícone" onclick="openIconPicker('genre')">
-              <i data-lucide="music-2" style="width:20px;height:20px;"></i>
-            </button>
-            <input type="text" id="event-genre" class="form-input" placeholder="Ex: Pagode, Eletrônico, Carnaval…">
-          </div>
-          <p class="form-hint">Texto livre. Usado na seção "Explorar por Gênero" e nos eventos relacionados.</p>
-          <input type="hidden" id="event-genre-icon" value="music-2">
+      <div class="form-group">
+        <label class="form-label">Categorias</label>
+        <div class="category-checklist" id="event-categories-list">
+          <span class="empty-hint">Carregando categorias…</span>
         </div>
+        <p class="form-hint">Selecione uma ou mais categorias já cadastradas em <a href="categories.html">Categorias</a>. Usado na seção "Explorar por Gênero" e nos eventos relacionados.</p>
       </div>
       <div class="form-group">
         <label class="form-label">Link do Ingresso</label>
@@ -338,7 +347,8 @@
 let editingId = null;
 let attractions = [];   // [{name, icon}]
 let infos = [];         // [string]
-let iconTarget = null;  // 'genre' | attraction index
+let iconTarget = null;  // attraction index
+let allCategories = []; // [{id, name}] — categorias já cadastradas
 
 const ICONS = [
   'music', 'music-2', 'mic-2', 'disc-3', 'guitar', 'piano',
@@ -354,8 +364,34 @@ const ICONS = [
   setUserInfo(auth.member);
   initMobileToggle();
   buildIconPicker();
+  await loadCategories();
   await loadEvents();
 })();
+
+// ── Categorias (multi-select) ───────────────────────────────
+async function loadCategories() {
+  const { data } = await db.from('categories').select('id, name').order('name');
+  allCategories = data || [];
+  renderCategoryChecklist([]);
+}
+
+function renderCategoryChecklist(selectedIds) {
+  const wrap = document.getElementById('event-categories-list');
+  if (!allCategories.length) {
+    wrap.innerHTML = `<span class="empty-hint">Nenhuma categoria cadastrada ainda — crie em <a href="categories.html">Categorias</a>.</span>`;
+    return;
+  }
+  wrap.innerHTML = allCategories.map(c => `
+    <label>
+      <input type="checkbox" value="${esc(c.id)}" ${selectedIds.includes(c.id) ? 'checked' : ''}>
+      ${esc(c.name)}
+    </label>
+  `).join('');
+}
+
+function getSelectedCategoryIds() {
+  return Array.from(document.querySelectorAll('#event-categories-list input[type="checkbox"]:checked')).map(cb => cb.value);
+}
 
 // ── Icon picker ────────────────────────────────────────────
 function buildIconPicker() {
@@ -372,10 +408,7 @@ function openIconPicker(target) {
 }
 
 function pickIcon(icon) {
-  if (iconTarget === 'genre') {
-    document.getElementById('event-genre-icon').value = icon;
-    document.getElementById('genre-icon-btn').innerHTML = `<i data-lucide="${icon}" style="width:20px;height:20px;"></i>`;
-  } else if (typeof iconTarget === 'number') {
+  if (typeof iconTarget === 'number') {
     attractions[iconTarget].icon = icon;
     renderAttractions();
   }
@@ -443,7 +476,7 @@ function removeInfo(i) {
 async function loadEvents() {
   const { data: events } = await db
     .from('events')
-    .select('*')
+    .select('*, categories(id, name)')
     .order('created_at', { ascending: false });
 
   const tbody = document.getElementById('events-body');
@@ -471,7 +504,7 @@ async function loadEvents() {
         </div>
       </td>
       <td class="text-muted text-sm">${ev.date ? new Date(ev.date + 'T00:00:00').toLocaleDateString('pt-BR') : '—'}${ev.time ? ' · ' + ev.time : ''}</td>
-      <td class="text-muted text-sm">${ev.genre || '—'}</td>
+      <td class="text-muted text-sm">${ev.categories && ev.categories.length ? ev.categories.map(c => esc(c.name)).join(', ') : '—'}</td>
       <td>${ev.featured ? '<span class="badge badge-featured">⭐ Destaque</span>' : '<span class="text-dim text-sm">—</span>'}</td>
       <td>${ev.active ? '<span class="badge badge-active">Ativo</span>' : '<span class="badge badge-inactive">Inativo</span>'}</td>
       <td>
@@ -501,7 +534,6 @@ function openModal(event = null) {
   document.getElementById('event-location').value = event?.location || '';
   document.getElementById('event-ticket-url').value = event?.ticket_url || '';
   document.getElementById('event-about').value = event?.about_html || '';
-  document.getElementById('event-genre').value = event?.genre || '';
   document.getElementById('event-venue-name').value = event?.venue_name || '';
   document.getElementById('event-venue-address').value = event?.venue_address || '';
   document.getElementById('event-maps-url').value = event?.maps_url || '';
@@ -512,9 +544,7 @@ function openModal(event = null) {
   document.getElementById('event-image-file').value = '';
   document.getElementById('map-image-file').value = '';
 
-  const genreIcon = event?.genre_icon || 'music-2';
-  document.getElementById('event-genre-icon').value = genreIcon;
-  document.getElementById('genre-icon-btn').innerHTML = `<i data-lucide="${genreIcon}" style="width:20px;height:20px;"></i>`;
+  renderCategoryChecklist(Array.isArray(event?.categories) ? event.categories.map(c => c.id) : []);
 
   attractions = Array.isArray(event?.attractions) ? structuredClone(event.attractions) : [];
   infos = Array.isArray(event?.important_info) ? structuredClone(event.important_info) : [];
@@ -540,7 +570,7 @@ function closeModal() {
 }
 
 async function editEvent(id) {
-  const { data } = await db.from('events').select('*').eq('id', id).single();
+  const { data } = await db.from('events').select('*, categories(id, name)').eq('id', id).single();
   if (data) openModal(data);
 }
 
@@ -566,8 +596,6 @@ async function saveEvent() {
       location:       document.getElementById('event-location').value.trim() || null,
       ticket_url:     document.getElementById('event-ticket-url').value.trim() || null,
       about_html:     document.getElementById('event-about').value.trim() || null,
-      genre:          document.getElementById('event-genre').value.trim() || null,
-      genre_icon:     document.getElementById('event-genre-icon').value || 'music-2',
       attractions:    attractions.filter(a => a.name && a.name.trim()),
       important_info: infos.filter(t => t && t.trim()),
       venue_name:     document.getElementById('event-venue-name').value.trim() || null,
@@ -581,16 +609,29 @@ async function saveEvent() {
 
     if (!payload.title) { showToast('O título é obrigatório.', 'error'); return; }
 
+    let eventId = editingId;
+
     if (editingId) {
       const { error } = await db.from('events').update(payload).eq('id', editingId);
       if (error) throw error;
-      showToast('Evento atualizado com sucesso!');
     } else {
-      const { error } = await db.from('events').insert(payload);
+      const { data, error } = await db.from('events').insert(payload).select('id').single();
       if (error) throw error;
-      showToast('Evento criado com sucesso!');
+      eventId = data.id;
     }
 
+    // Sincroniza as categorias vinculadas (apaga tudo e reinsere as selecionadas —
+    // simples e correto para uma lista pequena, evita ter que calcular um diff).
+    const categoryIds = getSelectedCategoryIds();
+    const { error: delCatError } = await db.from('event_categories').delete().eq('event_id', eventId);
+    if (delCatError) throw delCatError;
+    if (categoryIds.length) {
+      const { error: catError } = await db.from('event_categories')
+        .insert(categoryIds.map(categoryId => ({ event_id: eventId, category_id: categoryId })));
+      if (catError) throw catError;
+    }
+
+    showToast(editingId ? 'Evento atualizado com sucesso!' : 'Evento criado com sucesso!');
     closeModal();
     await loadEvents();
   } catch (err) {
