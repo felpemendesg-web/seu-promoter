@@ -551,7 +551,7 @@
                 </li>
               </ul>
               <div class="share-row">
-                <button class="share-btn"><i data-lucide="share-2" style="width: 15px;"></i> Compartilhar</button>
+                <button class="share-btn" id="ev-share-btn" type="button"><i data-lucide="share-2" style="width: 15px;"></i> Compartilhar</button>
                 <a class="share-btn" href="https://wa.me/5548996053430?text=Ol%C3%A1%21%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20eventos." target="_blank" rel="noopener" style="align-items: center; gap: 0.4rem;">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="currentColor"
                     style="display: block;">
@@ -836,6 +836,34 @@
           </article>
         `).join('');
         document.getElementById('sec-related').style.display = '';
+      }
+
+      // Compartilhar
+      const shareBtn = document.getElementById('ev-share-btn');
+      if (shareBtn) {
+        shareBtn.addEventListener('click', async () => {
+          const shareData = { title: ev.title, text: ev.subtitle || ev.title, url: location.href };
+          try {
+            if (navigator.share) {
+              await navigator.share(shareData);
+              return;
+            }
+          } catch (err) {
+            if (err && err.name === 'AbortError') return;
+          }
+          try {
+            await navigator.clipboard.writeText(location.href);
+            const original = shareBtn.innerHTML;
+            shareBtn.innerHTML = '<i data-lucide="check" style="width: 15px;"></i> Link copiado!';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            setTimeout(() => {
+              shareBtn.innerHTML = original;
+              if (typeof lucide !== 'undefined') lucide.createIcons();
+            }, 2000);
+          } catch {
+            window.prompt('Copie o link do evento:', location.href);
+          }
+        });
       }
 
       if (typeof lucide !== 'undefined') lucide.createIcons();
