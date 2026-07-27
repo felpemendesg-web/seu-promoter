@@ -723,6 +723,35 @@
       // Título e meta
       document.title = `${ev.title} | Seu Promoter`;
 
+      // Compartilhar — ligado cedo, não depende de nenhuma consulta abaixo.
+      const shareBtn = document.getElementById('ev-share-btn');
+      if (shareBtn) {
+        shareBtn.addEventListener('click', async () => {
+          const shareData = { title: ev.title, text: ev.subtitle || ev.title, url: location.href };
+          try {
+            if (navigator.share) {
+              await navigator.share(shareData);
+              return;
+            }
+          } catch (err) {
+            if (err && err.name === 'AbortError') return;
+          }
+          try {
+            await navigator.clipboard.writeText(location.href);
+            const original = shareBtn.innerHTML;
+            shareBtn.innerHTML = '<i data-lucide="check" style="width: 15px;"></i> Link copiado!';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            setTimeout(() => {
+              shareBtn.innerHTML = original;
+              if (typeof lucide !== 'undefined') lucide.createIcons();
+            }, 2000);
+          } catch (err) {
+            console.error('Falha ao copiar link:', err);
+            window.prompt('Copie o link do evento:', location.href);
+          }
+        });
+      }
+
       // Breadcrumb + hero
       document.getElementById('bc-title').textContent = ev.title;
       if (evCategories.length) {
@@ -836,34 +865,6 @@
           </article>
         `).join('');
         document.getElementById('sec-related').style.display = '';
-      }
-
-      // Compartilhar
-      const shareBtn = document.getElementById('ev-share-btn');
-      if (shareBtn) {
-        shareBtn.addEventListener('click', async () => {
-          const shareData = { title: ev.title, text: ev.subtitle || ev.title, url: location.href };
-          try {
-            if (navigator.share) {
-              await navigator.share(shareData);
-              return;
-            }
-          } catch (err) {
-            if (err && err.name === 'AbortError') return;
-          }
-          try {
-            await navigator.clipboard.writeText(location.href);
-            const original = shareBtn.innerHTML;
-            shareBtn.innerHTML = '<i data-lucide="check" style="width: 15px;"></i> Link copiado!';
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-            setTimeout(() => {
-              shareBtn.innerHTML = original;
-              if (typeof lucide !== 'undefined') lucide.createIcons();
-            }, 2000);
-          } catch {
-            window.prompt('Copie o link do evento:', location.href);
-          }
-        });
       }
 
       if (typeof lucide !== 'undefined') lucide.createIcons();
