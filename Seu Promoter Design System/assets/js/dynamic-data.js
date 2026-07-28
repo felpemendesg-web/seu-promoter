@@ -71,9 +71,9 @@ function eventCard(ev, i, featured = false) {
   return `
     <article class="${cls}">
       ${featured ? '<span class="badge-destaque">⭐ Destaque</span>' : ''}
-      <div style="overflow:hidden;">
+      <a href="/evento/${encodeURIComponent(ev.slug)}" style="overflow:hidden; display:block;" aria-label="Ver evento: ${esc(ev.title)}">
         <img src="${esc(safeUrl(ev.image_url)) || '/assets/images/show.jpg'}" alt="${esc(ev.title)}" class="${featured ? 'feat-img' : 'event-card-img'}">
-      </div>
+      </a>
       <div class="event-card-body">
         <span class="event-date">${dateStr}</span>
         <h3 class="event-title">${esc(ev.title)}</h3>

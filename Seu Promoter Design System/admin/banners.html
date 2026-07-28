@@ -13,7 +13,7 @@
     .banner-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
     .banner-card-imgs { display: grid; grid-template-columns: 2fr 1fr; gap: 0; }
     .banner-img-desktop { aspect-ratio: 16/5; object-fit: cover; width: 100%; background: var(--border); }
-    .banner-img-mobile  { aspect-ratio: 9/16; object-fit: cover; width: 100%; background: var(--border); }
+    .banner-img-mobile  { aspect-ratio: 4/5; object-fit: cover; width: 100%; background: var(--border); }
     .banner-img-placeholder { display: flex; align-items: center; justify-content: center; color: var(--text-dim); }
     .banner-card-body { padding: 1rem; }
     .banner-card-footer { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; border-top: 1px solid var(--border); }
@@ -99,7 +99,7 @@
 
     <div class="admin-content">
       <div class="alert alert-info" style="margin-bottom:1.5rem; font-size:0.8rem;">
-        Cada banner precisa de <strong>duas imagens</strong>: uma para Desktop (proporção ~2.5:1) e uma para Mobile (proporção 9:16). O site exibe automaticamente a versão correta para cada dispositivo.
+        Cada banner precisa de <strong>duas imagens</strong>: uma para Desktop (proporção ~2.5:1) e uma para Mobile (proporção 4:5, ex: 1080×1350px — tamanho comum de flyer de evento). O site exibe automaticamente a versão correta para cada dispositivo.
       </div>
       <div id="banners-grid" class="banner-grid">
         <div class="loading"><div class="spinner"></div>Carregando…</div>
@@ -144,7 +144,7 @@
         <!-- Mobile -->
         <div class="form-group">
           <label class="form-label">Imagem Mobile *</label>
-          <p class="form-hint" style="margin-bottom:0.5rem;">Proporção 9:16 (ex: 900×1600px)</p>
+          <p class="form-hint" style="margin-bottom:0.5rem;">Proporção 4:5 (ex: 1080×1350px) — tamanho comum de flyer de evento</p>
           <div class="upload-zone" id="mobile-upload-zone">
             <input type="file" id="mobile-file" accept="image/*">
             <div class="upload-icon">
