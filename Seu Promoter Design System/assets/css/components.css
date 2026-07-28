@@ -12,7 +12,9 @@
 
 .grid-3 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  /* auto-fill (não auto-fit): com poucos cards, mantém o tamanho de coluna
+     em vez de esticar o único item pra ocupar a linha inteira */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2rem;
 }
 
