@@ -994,9 +994,9 @@
         if (evCategories.length) document.getElementById('ev-related-sub').textContent = `Outros eventos de ${evCategories[0].name.toLowerCase()} em Florianópolis`;
         document.getElementById('ev-related').innerHTML = related.map((r, i) => `
           <article class="event-card reveal-on-scroll delay-${(i + 1) * 100} hover-glow">
-            <div style="overflow: hidden;">
+            <a href="/evento/${encodeURIComponent(r.slug)}" style="overflow: hidden; display:block;" aria-label="Ver evento: ${esc(r.title)}">
               <img src="${esc(safeUrl(r.image_url)) || '/assets/images/show.jpg'}" alt="${esc(r.title)}" class="event-card-img">
-            </div>
+            </a>
             <div class="event-card-body">
               <span class="event-date">${r.date ? new Date(r.date + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '') : ''}${r.time ? ' · ' + esc(r.time) : ''}</span>
               <h3 class="event-title">${esc(r.title)}</h3>
