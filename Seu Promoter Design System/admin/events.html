@@ -200,7 +200,12 @@
 
       <div class="form-group">
         <label class="form-label">Título *</label>
-        <input type="text" id="event-title" class="form-input" placeholder="Nome do evento" required>
+        <input type="text" id="event-title" class="form-input" placeholder="Nome do evento" required oninput="autoEventSlug()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Slug (URL)</label>
+        <input type="text" id="event-slug" class="form-input" placeholder="Ex: goodtimes-by-illusionize">
+        <p class="form-hint" id="event-slug-hint">Gerado automaticamente a partir do título. Use apenas letras, números e hífens.</p>
       </div>
       <div class="form-group">
         <label class="form-label">Semi descrição</label>
@@ -528,6 +533,10 @@ function openModal(event = null) {
   document.getElementById('modal-title').textContent = event ? 'Editar Evento' : 'Novo Evento';
   document.getElementById('event-id').value = event?.id || '';
   document.getElementById('event-title').value = event?.title || '';
+  document.getElementById('event-slug').value = event?.slug || '';
+  document.getElementById('event-slug-hint').textContent = event
+    ? 'Editável, mas cuidado: mudar isso muda a URL pública do evento e quebra links já compartilhados.'
+    : 'Gerado automaticamente a partir do título. Use apenas letras, números e hífens.';
   document.getElementById('event-subtitle').value = event?.subtitle || '';
   document.getElementById('event-date').value = event?.date || '';
   document.getElementById('event-time').value = event?.time || '';
@@ -556,6 +565,18 @@ function openModal(event = null) {
 
   document.getElementById('modal-overlay').classList.add('open');
   lucide.createIcons();
+}
+
+function slugify(text) {
+  return (text || '').toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function autoEventSlug() {
+  if (editingId) return; // evento existente já pode ter link compartilhado — não muda o slug sozinho
+  document.getElementById('event-slug').value = slugify(document.getElementById('event-title').value);
 }
 
 function setPreview(id, url) {
@@ -588,8 +609,12 @@ async function saveEvent() {
     let mapImageUrl = document.getElementById('map-image-url').value;
     if (mapFile) mapImageUrl = await uploadImage(mapFile, 'maps');
 
+    const title = document.getElementById('event-title').value.trim();
+    const baseSlug = slugify(document.getElementById('event-slug').value.trim() || title);
+
     const payload = {
-      title:          document.getElementById('event-title').value.trim(),
+      title:          title,
+      slug:           baseSlug,
       subtitle:       document.getElementById('event-subtitle').value.trim() || null,
       date:           document.getElementById('event-date').value || null,
       time:           document.getElementById('event-time').value.trim() || null,
@@ -610,14 +635,24 @@ async function saveEvent() {
     if (!payload.title) { showToast('O título é obrigatório.', 'error'); return; }
 
     let eventId = editingId;
+    let slugAttempt = 1;
 
-    if (editingId) {
-      const { error } = await db.from('events').update(payload).eq('id', editingId);
-      if (error) throw error;
-    } else {
-      const { data, error } = await db.from('events').insert(payload).select('id').single();
-      if (error) throw error;
-      eventId = data.id;
+    // Tenta salvar; se o slug colidir com o de outro evento (23505), tenta de novo
+    // com sufixo -2, -3... (mesma lógica usada no backfill da migration).
+    for (;;) {
+      payload.slug = slugAttempt === 1 ? baseSlug : `${baseSlug}-${slugAttempt}`;
+
+      if (editingId) {
+        const { error } = await db.from('events').update(payload).eq('id', editingId);
+        if (!error) break;
+        if (error.code === '23505' && slugAttempt < 20) { slugAttempt++; continue; }
+        throw error;
+      } else {
+        const { data, error } = await db.from('events').insert(payload).select('id').single();
+        if (!error) { eventId = data.id; break; }
+        if (error.code === '23505' && slugAttempt < 20) { slugAttempt++; continue; }
+        throw error;
+      }
     }
 
     // Sincroniza as categorias vinculadas (apaga tudo e reinsere as selecionadas —
@@ -631,7 +666,11 @@ async function saveEvent() {
       if (catError) throw catError;
     }
 
-    showToast(editingId ? 'Evento atualizado com sucesso!' : 'Evento criado com sucesso!');
+    showToast(
+      slugAttempt > 1
+        ? `Evento salvo! Já existia um evento com esse link, então usamos "${payload.slug}".`
+        : (editingId ? 'Evento atualizado com sucesso!' : 'Evento criado com sucesso!')
+    );
     closeModal();
     await loadEvents();
   } catch (err) {

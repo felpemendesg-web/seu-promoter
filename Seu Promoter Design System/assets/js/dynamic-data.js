@@ -71,14 +71,14 @@ function eventCard(ev, i, featured = false) {
     <article class="${cls}">
       ${featured ? '<span class="badge-destaque">⭐ Destaque</span>' : ''}
       <div style="overflow:hidden;">
-        <img src="${esc(safeUrl(ev.image_url)) || 'assets/images/show.jpg'}" alt="${esc(ev.title)}" class="${featured ? 'feat-img' : 'event-card-img'}">
+        <img src="${esc(safeUrl(ev.image_url)) || '/assets/images/show.jpg'}" alt="${esc(ev.title)}" class="${featured ? 'feat-img' : 'event-card-img'}">
       </div>
       <div class="event-card-body">
         <span class="event-date">${dateStr}</span>
         <h3 class="event-title">${esc(ev.title)}</h3>
         ${ev.location ? `<p class="event-location"><i data-lucide="map-pin" style="width:14px;height:14px;"></i>${esc(ev.location)}</p>` : ''}
         <div class="event-footer">
-          <a href="evento.html?id=${ev.id}" class="btn btn-primary">Ver Evento</a>
+          <a href="/evento/${encodeURIComponent(ev.slug)}" class="btn btn-primary">Ver Evento</a>
         </div>
       </div>
     </article>

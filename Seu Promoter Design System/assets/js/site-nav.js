@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const escNav = (s) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
   nav.innerHTML = `
-    <li><a href="index.html">Início</a></li>
-    ${cats.map(c => `<li class="animate-fade-in"><a href="genero.html?genero=${encodeURIComponent(c.name)}">${escNav(c.name)}</a></li>`).join('')}
+    <li><a href="/index.html">Início</a></li>
+    ${cats.map(c => `<li class="animate-fade-in"><a href="/genero.html?genero=${encodeURIComponent(c.name)}">${escNav(c.name)}</a></li>`).join('')}
   `;
 });

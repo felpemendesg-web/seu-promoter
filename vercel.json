@@ -5,6 +5,8 @@
   ],
   "rewrites": [
     { "source": "/admin/(.*)", "destination": "/Seu%20Promoter%20Design%20System/admin/$1" },
+    { "source": "/evento/:slug", "destination": "/api/evento?slug=:slug" },
+    { "source": "/evento", "has": [{ "type": "query", "key": "id", "value": "(?<id>.*)" }], "destination": "/api/evento?id=$id" },
     { "source": "/(.*)",        "destination": "/Seu%20Promoter%20Design%20System/$1" }
   ],
   "headers": [
