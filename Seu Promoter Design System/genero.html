@@ -316,23 +316,29 @@
      try {
       const genre = new URLSearchParams(location.search).get('genero');
 
-      // Cabeçalho
+      // Cabeçalho (título já sai do parâmetro da URL; a descrição depende da
+      // categoria cadastrada, então é definida só depois da consulta abaixo)
       if (genre) {
         document.title = `${genre} em Florianópolis — Eventos | Seu Promoter`;
         document.getElementById('bc-genre').textContent = genre;
         document.getElementById('genre-title').textContent = `${genre} em Florianópolis`;
-        document.getElementById('genre-desc').textContent =
-          `Encontre aqui os melhores eventos de ${genre.toLowerCase()} em Floripa e garanta seu ingresso.`;
       }
 
       // Chips de gênero (categorias cadastradas no admin)
       const { data: cats } = await db
         .from('categories')
-        .select('name, icon')
+        .select('name, icon, description')
         .eq('active', true)
         .order('name');
 
-      const genres = (cats || []).map(c => ({ name: c.name, icon: c.icon || 'music-2' }));
+      const genres = (cats || []).map(c => ({ name: c.name, icon: c.icon || 'music-2', description: c.description }));
+
+      if (genre) {
+        const matched = genres.find(g => g.name.toLowerCase() === genre.toLowerCase());
+        document.getElementById('genre-desc').textContent =
+          (matched && matched.description) ||
+          `Encontre aqui os melhores eventos de ${genre.toLowerCase()} em Floripa e garanta seu ingresso.`;
+      }
 
       const filtersRow = document.getElementById('filters-row');
       genres.forEach(g => {

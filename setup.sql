@@ -11,6 +11,7 @@ create table if not exists public.categories (
   id              uuid primary key default gen_random_uuid(),
   name            text not null,
   slug            text unique not null,
+  description     text,  -- exibida abaixo do título na página de gênero (genero.html)
   icon            text default 'calendar',
   active          boolean default true,
   created_at      timestamptz default now(),

@@ -176,6 +176,11 @@
         <input type="text" id="cat-slug" class="form-input" placeholder="Ex: pagode">
         <p class="form-hint">Gerado automaticamente. Use apenas letras, números e hífens.</p>
       </div>
+      <div class="form-group">
+        <label class="form-label">Descrição (exibida abaixo do título na página do gênero)</label>
+        <textarea id="cat-description" class="form-input" rows="2" placeholder="Ex: Os melhores eventos de pagode em Florianópolis, com ingresso garantido." style="resize: vertical; min-height: 60px; font-family: inherit;"></textarea>
+        <p class="form-hint">Se deixar em branco, usamos um texto padrão automático.</p>
+      </div>
       <div style="display:flex; flex-direction:column; gap:0.875rem;">
         <label style="display:flex; align-items:center; gap:0.625rem; cursor:pointer; font-size:0.875rem;">
           <div class="toggle">
@@ -320,6 +325,7 @@ function openModal(cat = null) {
   document.getElementById('cat-id').value = cat?.id || '';
   document.getElementById('cat-name').value = cat?.name || '';
   document.getElementById('cat-slug').value = cat?.slug || '';
+  document.getElementById('cat-description').value = cat?.description || '';
   document.getElementById('cat-explore').checked = cat ? cat.show_in_explore !== false : true;
   document.getElementById('cat-menu').checked = cat?.show_in_menu || false;
   document.getElementById('cat-active').checked = cat?.active !== false;
@@ -351,6 +357,7 @@ async function saveCategory() {
     const payload = {
       name:            document.getElementById('cat-name').value.trim(),
       slug:            document.getElementById('cat-slug').value.trim(),
+      description:     document.getElementById('cat-description').value.trim() || null,
       icon:            document.getElementById('cat-icon').value || 'music-2',
       show_in_explore: document.getElementById('cat-explore').checked,
       show_in_menu:    document.getElementById('cat-menu').checked,
