@@ -3,6 +3,9 @@
 --  Execute este SQL no SQL Editor do seu projeto Supabase
 -- ═══════════════════════════════════════════════════════
 
+-- unaccent é necessário pra gerar o slug amigável de events.slug (Réveillon, Turnê, Bão...)
+create extension if not exists unaccent with schema extensions;
+
 -- 1. Categorias
 create table if not exists public.categories (
   id              uuid primary key default gen_random_uuid(),
@@ -19,6 +22,7 @@ create table if not exists public.categories (
 create table if not exists public.events (
   id              uuid primary key default gen_random_uuid(),
   title           text not null,
+  slug            text unique not null,  -- URL amigável (/evento/<slug>), gerado a partir do título
   subtitle        text,
   date            date,
   time            text,
