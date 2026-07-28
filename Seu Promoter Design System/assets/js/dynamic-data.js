@@ -36,7 +36,9 @@ async function loadBanners() {
     .order('created_at');
 
   if (!banners || banners.length === 0) {
-    // Sem banner: compensa a navbar fixa na primeira seção visível
+    // Sem banner: esconde a seção (o slide placeholder fica sem uso) e
+    // compensa a navbar fixa na primeira seção visível
+    if (section) section.style.display = 'none';
     const first = document.getElementById('featured-section') || document.querySelector('.hero');
     if (first) first.style.paddingTop = '8rem';
     return;
@@ -59,7 +61,6 @@ async function loadBanners() {
     ).join('');
   }
 
-  if (section) section.style.display = '';
   initBannerCarousel();
 }
 
@@ -78,7 +79,7 @@ function eventCard(ev, i, featured = false) {
         <h3 class="event-title">${esc(ev.title)}</h3>
         ${ev.location ? `<p class="event-location"><i data-lucide="map-pin" style="width:14px;height:14px;"></i>${esc(ev.location)}</p>` : ''}
         <div class="event-footer">
-          <a href="/evento/${encodeURIComponent(ev.slug)}" class="btn btn-primary">Ver Evento</a>
+          <a href="/evento/${encodeURIComponent(ev.slug)}" class="btn btn-primary" aria-label="Ver evento: ${esc(ev.title)}">Ver Evento</a>
         </div>
       </div>
     </article>
@@ -98,11 +99,10 @@ async function loadFeaturedEvents() {
     .order('date', { ascending: true })
     .limit(8);
 
-  if (!events || events.length === 0) return;
+  const section = document.getElementById('featured-section');
+  if (!events || events.length === 0) { if (section) section.style.display = 'none'; return; }
 
   grid.innerHTML = events.map((ev, i) => eventCard(ev, i, true)).join('');
-  const section = document.getElementById('featured-section');
-  if (section) section.style.display = '';
 
   if (typeof lucide !== 'undefined') lucide.createIcons();
   revealAll(grid);
@@ -120,11 +120,10 @@ async function loadEvents() {
     .order('date', { ascending: true })
     .limit(9);
 
-  if (!events || events.length === 0) return;
+  const section = document.getElementById('upcoming-section');
+  if (!events || events.length === 0) { if (section) section.style.display = 'none'; return; }
 
   grid.innerHTML = events.map((ev, i) => eventCard(ev, i)).join('');
-  const section = document.getElementById('upcoming-section');
-  if (section) section.style.display = '';
 
   if (typeof lucide !== 'undefined') lucide.createIcons();
   revealAll(grid);
@@ -144,7 +143,8 @@ async function loadGenres() {
     .order('name');
 
   const genres = (cats || []).map(c => ({ name: c.name, icon: c.icon || 'music-2' }));
-  if (genres.length === 0) return;
+  const section = document.getElementById('genres-section');
+  if (genres.length === 0) { if (section) section.style.display = 'none'; return; }
 
   const items = genres.map((g, i) => `
     <a href="genero.html?genero=${encodeURIComponent(g.name)}" class="category-card reveal-on-scroll delay-${(i % 5 + 1) * 100}">
@@ -163,9 +163,6 @@ async function loadGenres() {
       <span class="category-name">Ver Todos</span>
     </a>
   `;
-
-  const section = document.getElementById('genres-section');
-  if (section) section.style.display = '';
 
   if (typeof lucide !== 'undefined') lucide.createIcons();
   revealAll(grid);

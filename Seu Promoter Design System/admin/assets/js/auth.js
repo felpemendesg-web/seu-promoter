@@ -52,12 +52,47 @@ function showToast(message, type = 'success') {
   }, 3200);
 }
 
+// Redimensiona (máx. 1600px no maior lado) e recomprime como JPEG antes do
+// upload — imagens de evento/banner enviadas direto do celular costumam vir
+// com vários MB e sem nenhum tratamento, o que pesava demais no carregamento
+// do site. Só usa a versão comprimida se ela sair menor que o arquivo original.
+async function compressImage(file, maxDimension = 1600, quality = 0.8) {
+  if (file.type === 'image/svg+xml') return file; // vetor, nada a ganhar comprimindo
+
+  try {
+    const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    let { width, height } = bitmap;
+    if (width > maxDimension || height > maxDimension) {
+      const scale = maxDimension / Math.max(width, height);
+      width = Math.round(width * scale);
+      height = Math.round(height * scale);
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    canvas.getContext('2d').drawImage(bitmap, 0, 0, width, height);
+
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
+    if (!blob || blob.size >= file.size) return file;
+
+    return new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' });
+  } catch (err) {
+    console.error('Falha ao comprimir imagem, enviando original:', err);
+    return file;
+  }
+}
+
 async function uploadImage(file, folder) {
-  const ext = file.name.split('.').pop().toLowerCase();
+  const compressed = await compressImage(file);
+  const ext = compressed.name.split('.').pop().toLowerCase();
   const name = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2,8)}.${ext}`;
 
-  const { error } = await db.storage.from('images').upload(name, file, {
-    cacheControl: '3600',
+  // cacheControl longo porque o nome do arquivo é único por upload
+  // (timestamp + sufixo aleatório) — nunca é sobrescrito, então é seguro
+  // deixar o CDN guardar por bastante tempo.
+  const { error } = await db.storage.from('images').upload(name, compressed, {
+    cacheControl: '31536000',
     upsert: false
   });
 

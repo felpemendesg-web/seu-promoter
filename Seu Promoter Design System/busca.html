@@ -145,6 +145,7 @@
     </div>
   </header>
 
+  <main>
   <!-- HERO DE BUSCA -->
   <section class="search-hero">
     <div class="container">
@@ -175,6 +176,7 @@
       </div>
     </div>
   </section>
+  </main>
 
   <!-- FOOTER -->
   <footer class="footer">
@@ -268,7 +270,7 @@
               <h3 class="event-title">${esc(ev.title)}</h3>
               ${ev.location ? `<p class="event-location"><i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>${esc(ev.location)}</p>` : ''}
               <div class="event-footer">
-                <a href="/evento/${encodeURIComponent(ev.slug)}" class="btn btn-primary">Ver Evento</a>
+                <a href="/evento/${encodeURIComponent(ev.slug)}" class="btn btn-primary" aria-label="Ver evento: ${esc(ev.title)}">Ver Evento</a>
               </div>
             </div>
           </article>

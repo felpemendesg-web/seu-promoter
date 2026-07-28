@@ -499,11 +499,17 @@
     </div>
   </header>
 
+  <main>
   <!-- MAIN BANNER CAROUSEL -->
-  <section class="main-banner-section reveal-on-scroll" id="banner-section" style="display:none;">
+  <!-- Sem display:none: o slide placeholder abaixo já reserva a altura certa
+       (mesmo aspect-ratio do slide real) pra não causar layout shift quando
+       o banner carrega — fica atrás do page-loader até os dados chegarem. -->
+  <section class="main-banner-section reveal-on-scroll" id="banner-section">
     <div class="container">
       <div class="main-banner-carousel">
-        <div class="main-banner-track"></div>
+        <div class="main-banner-track">
+          <div class="main-banner-slide" style="background: var(--color-gray-100);"></div>
+        </div>
 
         <!-- Arrows -->
         <button class="main-banner-arrow prev" aria-label="Anterior">
@@ -520,7 +526,7 @@
   </section>
 
   <!-- EM DESTAQUE -->
-  <section class="section" id="featured-section" style="display:none;">
+  <section class="section" id="featured-section">
     <div class="container">
       <div class="section-header reveal-on-scroll">
         <h2 class="section-title">Em Alta 🔥</h2>
@@ -562,7 +568,7 @@
   </section>
 
   <!-- PRÓXIMOS EVENTOS -->
-  <section class="section" id="upcoming-section" style="display:none;">
+  <section class="section" id="upcoming-section">
     <div class="container">
       <div class="section-header reveal-on-scroll">
         <h2 class="section-title">Próximos Eventos</h2>
@@ -576,7 +582,7 @@
   </section>
 
   <!-- EXPLORAR POR GÊNERO -->
-  <section class="section" style="background-color: var(--color-white); display:none;" id="genres-section">
+  <section class="section" style="background-color: var(--color-white);" id="genres-section">
     <div class="container">
       <div class="section-header reveal-on-scroll">
         <h2 class="section-title">Explorar por Gênero</h2>
@@ -615,6 +621,7 @@
       </div>
     </div>
   </section>
+  </main>
 
   <!-- FOOTER -->
   <footer class="footer">
