@@ -181,6 +181,19 @@
         <textarea id="cat-description" class="form-input" rows="2" placeholder="Ex: Os melhores eventos de pagode em Florianópolis, com ingresso garantido." style="resize: vertical; min-height: 60px; font-family: inherit;"></textarea>
         <p class="form-hint">Se deixar em branco, usamos um texto padrão automático.</p>
       </div>
+      <div class="form-group">
+        <label class="form-label">Imagem da hero (opcional)</label>
+        <p class="form-hint" style="margin-bottom:0.5rem;">Fundo exibido atrás do título na página do gênero. Proporção larga (ex: 1600×500px).</p>
+        <div class="upload-zone" id="cat-hero-upload-zone">
+          <input type="file" id="cat-hero-file" accept="image/*">
+          <div class="upload-icon">
+            <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <p class="upload-text" style="font-size:0.8rem;">Escolher imagem</p>
+        </div>
+        <img class="img-preview" id="cat-hero-preview" alt="Preview da imagem da hero">
+        <input type="hidden" id="cat-hero-url">
+      </div>
       <div style="display:flex; flex-direction:column; gap:0.875rem;">
         <label style="display:flex; align-items:center; gap:0.625rem; cursor:pointer; font-size:0.875rem;">
           <div class="toggle">
@@ -330,6 +343,11 @@ function openModal(cat = null) {
   document.getElementById('cat-menu').checked = cat?.show_in_menu || false;
   document.getElementById('cat-active').checked = cat?.active !== false;
 
+  document.getElementById('cat-hero-file').value = '';
+  document.getElementById('cat-hero-url').value = cat?.hero_image_url || '';
+  const hp = document.getElementById('cat-hero-preview');
+  if (cat?.hero_image_url) { hp.src = cat.hero_image_url; hp.classList.add('show'); } else { hp.src = ''; hp.classList.remove('show'); }
+
   const icon = cat?.icon || 'music-2';
   document.getElementById('cat-icon').value = icon;
   document.getElementById('cat-icon-btn').innerHTML = `<i data-lucide="${icon}" style="width:20px;height:20px;"></i>`;
@@ -354,11 +372,16 @@ async function saveCategory() {
   btn.disabled = true;
 
   try {
+    const heroFile = document.getElementById('cat-hero-file').files[0];
+    let heroUrl = document.getElementById('cat-hero-url').value;
+    if (heroFile) heroUrl = await uploadImage(heroFile, 'categories/hero');
+
     const payload = {
       name:            document.getElementById('cat-name').value.trim(),
       slug:            document.getElementById('cat-slug').value.trim(),
       description:     document.getElementById('cat-description').value.trim() || null,
       icon:            document.getElementById('cat-icon').value || 'music-2',
+      hero_image_url:  heroUrl || null,
       show_in_explore: document.getElementById('cat-explore').checked,
       show_in_menu:    document.getElementById('cat-menu').checked,
       active:          document.getElementById('cat-active').checked
@@ -399,6 +422,18 @@ async function deleteCategory(id, name) {
 
 document.getElementById('modal-overlay').addEventListener('click', (e) => {
   if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+
+document.getElementById('cat-hero-file').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const p = document.getElementById('cat-hero-preview');
+    p.src = ev.target.result;
+    p.classList.add('show');
+  };
+  reader.readAsDataURL(file);
 });
 </script>
 </body>

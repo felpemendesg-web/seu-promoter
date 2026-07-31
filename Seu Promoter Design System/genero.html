@@ -54,7 +54,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: url('assets/images/reveillon.jpg') center/cover;
+      background: var(--hero-img, url('assets/images/reveillon.jpg')) center/cover;
       opacity: 0.12;
     }
 
@@ -200,7 +200,7 @@
 
   <main>
   <!-- HERO -->
-  <section class="category-hero">
+  <section class="category-hero" id="category-hero">
     <div class="container">
       <nav class="breadcrumb">
         <a href="index.html">Início</a>
@@ -329,17 +329,23 @@
       // Chips de gênero (categorias cadastradas no admin)
       const { data: cats } = await db
         .from('categories')
-        .select('name, icon, description')
+        .select('name, icon, description, hero_image_url')
         .eq('active', true)
         .order('name');
 
-      const genres = (cats || []).map(c => ({ name: c.name, icon: c.icon || 'music-2', description: c.description }));
+      const genres = (cats || []).map(c => ({ name: c.name, icon: c.icon || 'music-2', description: c.description, heroImageUrl: c.hero_image_url }));
 
       if (genre) {
         const matched = genres.find(g => g.name.toLowerCase() === genre.toLowerCase());
         document.getElementById('genre-desc').textContent =
           (matched && matched.description) ||
           `Encontre aqui os melhores eventos de ${genre.toLowerCase()} em Floripa e garanta seu ingresso.`;
+        if (matched && matched.heroImageUrl) {
+          const safe = safeUrl(matched.heroImageUrl);
+          if (safe !== '#') {
+            document.getElementById('category-hero').style.setProperty('--hero-img', `url('${safe}')`);
+          }
+        }
       }
 
       const filtersRow = document.getElementById('filters-row');

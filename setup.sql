@@ -12,6 +12,7 @@ create table if not exists public.categories (
   name            text not null,
   slug            text unique not null,
   description     text,  -- exibida abaixo do título na página de gênero (genero.html)
+  hero_image_url  text,  -- fundo do banner na página de gênero (genero.html)
   icon            text default 'calendar',
   active          boolean default true,
   created_at      timestamptz default now(),
